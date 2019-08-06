@@ -50,25 +50,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 		// Display a message box to the user
 		vscode.window.showInformationMessage('Hello World!');
-
-		// Get the active text editor
-		let editor = vscode.window.activeTextEditor;
-
-		if (editor) {
-			let document = editor.document;
-			console.log('fileName', document.fileName);
-			console.log('lineCount', document.lineCount);
-			/*
-			let selection = editor.selection;
-
-			// Get the word within the selection
-			let word = document.getText(selection);
-			let reversed = word.split('').reverse().join('');
-			editor.edit(editBuilder => {
-				editBuilder.replace(selection, reversed);
-			});
-			*/
-		}
 	});
 
 	context.subscriptions.push(disposable);
@@ -155,8 +136,24 @@ class CatCodingPanel {
 						vscode.window.showErrorMessage(message.text);
 						return;
 					
-					//  Restore code blocks.
+					//  Restore code blocks. Read the contexts of the active text editor and send to webview to load.
 					case 'restoreBlocks':	
+						// Get the active text editor
+						let editor = vscode.window.activeTextEditor;
+						if (editor) {
+							let document = editor.document;
+							console.log(['doc', document.fileName, document.lineCount]);
+							/*
+							let selection = editor.selection;
+							// Get the word within the selection
+							let word = document.getText(selection);
+							let reversed = word.split('').reverse().join('');
+							editor.edit(editBuilder => {
+								editBuilder.replace(selection, reversed);
+							});
+							*/
+						}
+
 						// Send a message to our webview.
 						this._panel.webview.postMessage({ 
 							command: 'load',
@@ -680,10 +677,12 @@ class CatCodingPanel {
 		
 		</body>
 		<script>
+		/*
 		vscode.postMessage({
 			command: 'alert',
 			text: 'visual-embedded-rust loaded'
 		});
+		*/
 		</script>
 	  </html>		
 		`;
