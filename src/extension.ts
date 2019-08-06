@@ -149,10 +149,19 @@ class CatCodingPanel {
 		// Handle messages from the webview
 		this._panel.webview.onDidReceiveMessage(
 			message => {
-				console.log('onDidReceiveMessage');
+				console.log(['onDidReceiveMessage', message]);
 				switch (message.command) {
 					case 'alert':
 						vscode.window.showErrorMessage(message.text);
+						return;
+					
+					//  Restore code blocks.
+					case 'restoreBlocks':	
+						// Send a message to our webview.
+						this._panel.webview.postMessage({ 
+							command: 'load',
+							blocks: 'abcdef',
+						});
 						return;
 				}
 			},
@@ -208,11 +217,13 @@ class CatCodingPanel {
 	private _getHtmlForWebview(catGif: string) {
 		// Local path to main script run in the webview
 		const scriptPathOnDisk = vscode.Uri.file(
-			path.join(this._extensionPath, 'media', 'blockly-mynewt-rust')
+			path.join(this._extensionPath, 'media')
 		);
 
 		// And the uri we use to load this script in the webview
-		const scriptUri = scriptPathOnDisk.with({ scheme: 'vscode-resource' });
+		const scriptUri = scriptPathOnDisk.with({ scheme: 'vscode-resource' });		
+		const vscodeUri = scriptUri + '/vscode';  //  VSCode integration scripts
+		const blocklyUri = scriptUri + '/blockly-mynewt-rust';  //  Blockly scripts
 
 		// Use a nonce to whitelist which scripts can be run
 		const nonce = getNonce();
@@ -225,48 +236,54 @@ class CatCodingPanel {
 		  <meta charset="utf-8">
 		  <meta name="google" value="notranslate">
 		  <title>Blockly Demo:</title>
-		  <link rel="stylesheet" href="${scriptUri}/demos/code/style.css">
+		  <link rel="stylesheet" href="${blocklyUri}/demos/code/style.css">
 		  
 		  <script>
 		  //  Capture the vscode object for messaging the VSCode Extension.
 		  var vscode = acquireVsCodeApi();
 		  </script>
 
-		  <!-- TODO: Storage Functions
-		  <TODO script nonce="${nonce}" src="${scriptUri}/demos/code/storage.js"></script>
-		  -->
-
 		  <!--  Load Blockly and Google Closure  -->
-		  <script nonce="${nonce}" src="${scriptUri}/blockly_uncompressed.js"></script>
+		  <script nonce="${nonce}" src="${blocklyUri}/blockly_uncompressed.js"></script>
 
 		  <!--  Need to load language explicitly for VSCode  -->
-		  <script nonce="${nonce}" src="${scriptUri}/msg/js/en.js"></script>
-		  <script nonce="${nonce}" src="${scriptUri}/demos/code/msg/en.js"></script>
+		  <script nonce="${nonce}" src="${blocklyUri}/msg/js/en.js"></script>
+		  <script nonce="${nonce}" src="${blocklyUri}/demos/code/msg/en.js"></script>
 
-		  <script nonce="${nonce}" src="${scriptUri}/blocks_compressed.js"></script>
-		  <script nonce="${nonce}" src="${scriptUri}/javascript_compressed.js"></script>
-		  <script nonce="${nonce}" src="${scriptUri}/python_compressed.js"></script>
-		  <script nonce="${nonce}" src="${scriptUri}/php_compressed.js"></script>
-		  <script nonce="${nonce}" src="${scriptUri}/lua_compressed.js"></script>
-		  <script nonce="${nonce}" src="${scriptUri}/dart_compressed.js"></script>
+		  <!--  VSCode Storage Integration  -->
+		  <script nonce="${nonce}" src="${vscodeUri}/storage.js"></script>
+		  <script nonce="${nonce}" src="${vscodeUri}/message.js"></script>
+  
+		  <!--  Load Blocks  -->
+		  <script nonce="${nonce}" src="${blocklyUri}/blocks_compressed.js"></script>
+
+		  <!--  Load Code Generators  -->
+		  <script nonce="${nonce}" src="${blocklyUri}/javascript_compressed.js"></script>
+		  <script nonce="${nonce}" src="${blocklyUri}/python_compressed.js"></script>
+		  <script nonce="${nonce}" src="${blocklyUri}/php_compressed.js"></script>
+		  <script nonce="${nonce}" src="${blocklyUri}/lua_compressed.js"></script>
+		  <script nonce="${nonce}" src="${blocklyUri}/dart_compressed.js"></script>
+
 		  <!--  Load Rust Code Generator  -->
-		  <script nonce="${nonce}" src="${scriptUri}/generators/rust.js"></script>
+		  <script nonce="${nonce}" src="${blocklyUri}/generators/rust.js"></script>
 		  <!--  Load Mynewt Blocks  -->
-		  <script nonce="${nonce}" src="${scriptUri}/generators/rust/mynewt_blocks.js"></script>
+		  <script nonce="${nonce}" src="${blocklyUri}/generators/rust/mynewt_blocks.js"></script>
 		  <!--  Load Mynewt Functions  -->
-		  <script nonce="${nonce}" src="${scriptUri}/generators/rust/mynewt_functions.js"></script>
+		  <script nonce="${nonce}" src="${blocklyUri}/generators/rust/mynewt_functions.js"></script>
 		  <!--  Load Rust Functions. TODO: Package into rust_compressed.js  -->
-		  <script nonce="${nonce}" src="${scriptUri}/generators/rust/colour.js"></script>
-		  <script nonce="${nonce}" src="${scriptUri}/generators/rust/lists.js"></script>
-		  <script nonce="${nonce}" src="${scriptUri}/generators/rust/logic.js"></script>
-		  <script nonce="${nonce}" src="${scriptUri}/generators/rust/loops.js"></script>
-		  <script nonce="${nonce}" src="${scriptUri}/generators/rust/math.js"></script>
-		  <script nonce="${nonce}" src="${scriptUri}/generators/rust/procedures.js"></script>
-		  <script nonce="${nonce}" src="${scriptUri}/generators/rust/text.js"></script>
-		  <script nonce="${nonce}" src="${scriptUri}/generators/rust/variables.js"></script>  
-		  <script nonce="${nonce}" src="${scriptUri}/generators/rust/variables_dynamic.js"></script>
+		  <script nonce="${nonce}" src="${blocklyUri}/generators/rust/colour.js"></script>
+		  <script nonce="${nonce}" src="${blocklyUri}/generators/rust/lists.js"></script>
+		  <script nonce="${nonce}" src="${blocklyUri}/generators/rust/logic.js"></script>
+		  <script nonce="${nonce}" src="${blocklyUri}/generators/rust/loops.js"></script>
+		  <script nonce="${nonce}" src="${blocklyUri}/generators/rust/math.js"></script>
+		  <script nonce="${nonce}" src="${blocklyUri}/generators/rust/procedures.js"></script>
+		  <script nonce="${nonce}" src="${blocklyUri}/generators/rust/text.js"></script>
+		  <script nonce="${nonce}" src="${blocklyUri}/generators/rust/variables.js"></script>  
+		  <script nonce="${nonce}" src="${blocklyUri}/generators/rust/variables_dynamic.js"></script>
 		  <!--  TODO: End  -->
-		  <script nonce="${nonce}" src="${scriptUri}/demos/code/code.js"></script>
+
+		  <!--  Load Main Program  -->
+		  <script nonce="${nonce}" src="${blocklyUri}/demos/code/code.js"></script>
 		</head>
 		<body>
 		  <table width="100%" height="100%">
@@ -668,7 +685,7 @@ class CatCodingPanel {
 			text: 'visual-embedded-rust loaded'
 		});
 		</script>
-		</html>		
+	  </html>		
 		`;
 		/*
 		return `<!DOCTYPE html>
