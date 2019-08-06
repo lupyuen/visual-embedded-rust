@@ -50,6 +50,25 @@ export function activate(context: vscode.ExtensionContext) {
 
 		// Display a message box to the user
 		vscode.window.showInformationMessage('Hello World!');
+
+		// Get the active text editor
+		let editor = vscode.window.activeTextEditor;
+
+		if (editor) {
+			let document = editor.document;
+			console.log('fileName', document.fileName);
+			console.log('lineCount', document.lineCount);
+			/*
+			let selection = editor.selection;
+
+			// Get the word within the selection
+			let word = document.getText(selection);
+			let reversed = word.split('').reverse().join('');
+			editor.edit(editBuilder => {
+				editBuilder.replace(selection, reversed);
+			});
+			*/
+		}
 	});
 
 	context.subscriptions.push(disposable);
@@ -71,6 +90,7 @@ class CatCodingPanel {
 	private _disposables: vscode.Disposable[] = [];
 
 	public static createOrShow(extensionPath: string) {
+		console.log('createOrShow');
 		const column = vscode.window.activeTextEditor
 			? vscode.window.activeTextEditor.viewColumn
 			: undefined;
@@ -99,6 +119,7 @@ class CatCodingPanel {
 	}
 
 	public static revive(panel: vscode.WebviewPanel, extensionPath: string) {
+		console.log('revive');
 		CatCodingPanel.currentPanel = new CatCodingPanel(panel, extensionPath);
 	}
 
@@ -116,6 +137,7 @@ class CatCodingPanel {
 		// Update the content based on view changes
 		this._panel.onDidChangeViewState(
 			e => {
+				console.log('onDidChangeViewState');
 				if (this._panel.visible) {
 					this._update();
 				}
@@ -127,6 +149,7 @@ class CatCodingPanel {
 		// Handle messages from the webview
 		this._panel.webview.onDidReceiveMessage(
 			message => {
+				console.log('onDidReceiveMessage');
 				switch (message.command) {
 					case 'alert':
 						vscode.window.showErrorMessage(message.text);
@@ -204,6 +227,11 @@ class CatCodingPanel {
 		  <title>Blockly Demo:</title>
 		  <link rel="stylesheet" href="${scriptUri}/demos/code/style.css">
 		  
+		  <script>
+		  //  Capture the vscode object for messaging the VSCode Extension.
+		  var vscode = acquireVsCodeApi();
+		  </script>
+
 		  <!-- TODO: Storage Functions
 		  <TODO script nonce="${nonce}" src="${scriptUri}/demos/code/storage.js"></script>
 		  -->
@@ -634,6 +662,12 @@ class CatCodingPanel {
 		  </xml>
 		
 		</body>
+		<script>
+		vscode.postMessage({
+			command: 'alert',
+			text: 'visual-embedded-rust loaded'
+		});
+		</script>
 		</html>		
 		`;
 		/*
