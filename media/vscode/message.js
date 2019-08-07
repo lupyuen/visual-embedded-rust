@@ -61,6 +61,7 @@ function composeDoc(xml, code) {
     const doc = [
         code,
         '/*  ' + blocks_begin,
+        xml,
         blocks_end + '  */',
     ].join('\n');
     return doc;
