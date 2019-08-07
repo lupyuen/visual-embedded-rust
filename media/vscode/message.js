@@ -45,6 +45,9 @@ window.addEventListener('message', event => {
             var workspace = Blockly.getMainWorkspace();  if (!workspace) { console.log('Missing workspace'); return; }
             var xml = Blockly.Xml.textToDom(blocks);
             Blockly.Xml.domToWorkspace(xml, workspace);
+
+            //  Monitor changes and sync updates to the VSCode document.
+            BlocklyStorage.monitorChanges_(workspace);            
             return;
     }
 });

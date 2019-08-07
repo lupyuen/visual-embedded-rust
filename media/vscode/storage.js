@@ -164,8 +164,7 @@ BlocklyStorage.handleRequest_ = function() {
 
 /**
  * Start monitoring the workspace.  If a change is made that changes the XML,
- * clear the key from the URL.  Stop monitoring the workspace once such a
- * change is detected.
+ * update the VSCode document.
  * @param {!Blockly.WorkspaceSvg} workspace Workspace.
  * @private
  */
@@ -174,12 +173,15 @@ BlocklyStorage.monitorChanges_ = function(workspace) {
   var startXmlDom = Blockly.Xml.workspaceToDom(workspace);
   var startXmlText = Blockly.Xml.domToText(startXmlDom);
   function change() {
+    console.log('monitorChanges_change');
     var xmlDom = Blockly.Xml.workspaceToDom(workspace);
     var xmlText = Blockly.Xml.domToText(xmlDom);
+    /*
     if (startXmlText != xmlText) {
       window.location.hash = '';
       workspace.removeChangeListener(change);
     }
+    */
   }
   workspace.addChangeListener(change);
 };
