@@ -131,14 +131,15 @@ class CatCodingPanel {
 		// Handle messages from the webview
 		this._panel.webview.onDidReceiveMessage(
 			message => {
-				console.log(['onDidReceiveMessage', message]);
+				console.log(['onDidReceiveMessage', JSON.stringify(message).substr(0, 50)]);
 				switch (message.command) {
-					case 'alert':
+					case 'alert': {
 						vscode.window.showErrorMessage(message.text);
 						return;
+					}
 					
 					//  Restore code blocks. Read the contexts of the active text editor and send to webview to load.
-					case 'restoreBlocks':	
+					case 'restoreBlocks': {
 						// Get the active text editor. If none active, return the last active one.
 						let editor = vscode.window.activeTextEditor;
 						if (!editor || !CatCodingPanel._isValidEditor(editor)) { 
@@ -155,20 +156,32 @@ class CatCodingPanel {
 
 						// Send a `load` message to our webview with the text.
 						this._panel.webview.postMessage({ 
-							command: 'load',
+							command: 'loadDoc',
 							text:    text,
 						});
 						return;
-						
-						/*
-						let selection = editor.selection;
-						// Get the word within the selection
-						let word = document.getText(selection);
-						let reversed = word.split('').reverse().join('');
+					}	
+
+					//  Update the Visual Rust document with the generated Rust code and the updated blocks XML.
+					case 'updateDoc': {
+						const newText = message.text;
+						let editor = this._editor;
+						if (!editor || !CatCodingPanel._isValidEditor(editor)) { console.log('No editor to update'); return; }
 						editor.edit(editBuilder => {
-							editBuilder.replace(selection, reversed);
-						});
-						*/
+							//  Get the range of the entire doc.
+							if (!editor) { console.log('Missing editor'); return; }
+							const document = editor.document;
+							const text = document.getText();
+							if (!text) { console.log('Missing text'); return; }
+							const range = new vscode.Range(
+								new vscode.Position(0, 0), 
+								document.positionAt(text.length)
+							);
+							//  Replace the range by the new text.
+							editBuilder.replace(range, newText);
+						});	
+						return;
+					}
 				}
 			},
 			null,

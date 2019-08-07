@@ -173,15 +173,21 @@ BlocklyStorage.monitorChanges_ = function(workspace) {
   var startXmlDom = Blockly.Xml.workspaceToDom(workspace);
   var startXmlText = Blockly.Xml.domToText(startXmlDom);
   function change() {
-    console.log('monitorChanges_change');
     var xmlDom = Blockly.Xml.workspaceToDom(workspace);
     var xmlText = Blockly.Xml.domToText(xmlDom);
-    /*
-    if (startXmlText != xmlText) {
-      window.location.hash = '';
-      workspace.removeChangeListener(change);
-    }
-    */
+    if (startXmlText == xmlText) { return; }  //  No changes.
+    startXmlText = xmlText;
+    console.log('monitorChanges_change');
+
+    //  Generate the Rust code. Combine with the XML, enclosed by `BEGIN BLOCKS`...`END BLOCKS` tags.
+    var code = Blockly.Rust.workspaceToCode(workspace);
+    var text = composeDoc(xmlText, code);
+
+    //  Send the updated doc to VSCode to update the editor.
+    vscode.postMessage({
+      command: 'updateDoc',
+      text: text
+    });  
   }
   workspace.addChangeListener(change);
 };

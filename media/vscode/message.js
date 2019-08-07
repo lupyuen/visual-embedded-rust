@@ -24,21 +24,25 @@
  */
 'use strict';
 
+//  Markers for wrapping the XML blocks
+var blocks_begin = '-- BEGIN BLOCKS --';
+var blocks_end   = '-- END BLOCKS --';
+
 // Handle the message received from VSCode
 window.addEventListener('message', event => {
     const message = event.data; // The JSON data our extension sent
-    console.log(['recv msg', JSON.stringify(message).substr(0, 10)]);
+    console.log(['recv msg', JSON.stringify(message).substr(0, 20)]);
     switch (message.command) {
         //  Load the blocks into the workspace.
-        case 'load':
+        case 'loadDoc':
             //  Text contains `... /* -- BEGIN BLOCKS -- ... -- END BLOCKS -- */`. Extract the blocks.            
             const text = message.text;
-            console.log(['load', text.substr(0, 10)]);
+            console.log(['loadDoc', text.substr(0, 20)]);
 
-            const beginSplit = text.split('-- BEGIN BLOCKS --', 2);
-            if (beginSplit.length < 2) { console.log('"-- BEGIN BLOCKS --" not found'); return; }
-            const endSplit = beginSplit[1].split('-- END BLOCKS --', 2);
-            if (endSplit.length < 2) { console.log('"-- END BLOCKS --" not found'); return; }
+            const beginSplit = text.split(blocks_begin, 2);
+            if (beginSplit.length < 2) { console.log(blocks_begin + ' not found'); return; }
+            const endSplit = beginSplit[1].split(blocks_end, 2);
+            if (endSplit.length < 2) { console.log(blocks_end + ' not found'); return; }
             const blocks = endSplit[0];
 
             //  Set the blocks in the workspace.
@@ -51,3 +55,13 @@ window.addEventListener('message', event => {
             return;
     }
 });
+
+function composeDoc(xml, code) {
+    //  Given the XML blocks and the generated Rust code, compose the document to be updated in VSCode.
+    const doc = [
+        code,
+        '/*  ' + blocks_begin,
+        blocks_end + '  */',
+    ].join('\n');
+    return doc;
+}
