@@ -14,7 +14,7 @@ Read the articles:
 
 1. The extension creates a [WebView that embeds the HTML code](src/extension.ts#L250-L732) from Google Blockly
 
-1. [When the WebView loads](media/vscode/storage.js#L58-L69), it fetches the [Blockly XML embedded](blob/master/src/extension.ts#L141-L163) in the Rust document in VSCode and [refreshes the Blockly workspace](blob/master/media/vscode/message.js#L36-L55)
+1. [When the WebView loads](media/vscode/storage.js#L58-L69), it fetches the [Blockly XML embedded](src/extension.ts#L141-L163) in the Rust document in VSCode and [refreshes the Blockly workspace](media/vscode/message.js#L36-L55)
 
 1. When the [Blockly workspace is updated](media/vscode/storage.js#L165-L194), it sends the [updated Blockly XML and the generated Rust code](media/vscode/message.js#L59-L68) to the VSCode Extension.  The extension (updates the Rust document)[src/extension.ts#L165-L184] in VSCode.
 
