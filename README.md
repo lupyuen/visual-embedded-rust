@@ -8,6 +8,20 @@ Read the articles:
 
 1. [_"Visual Programming with Embedded Rust? Yes we can with Apache Mynewt and Google Blockly!"_](https://medium.com/@ly.lee/visual-programming-with-embedded-rust-yes-we-can-with-apache-mynewt-and-google-blockly-8b67ef7412d7)
 
+## Overall Flow
+
+1. Main logic for the VSCode Extension is in extension.ts
+
+1. The extension creates a WebView that embeds the HTML code from Google Blockly
+
+1. When the WebView loads, it fetches the Blockly XML embedded in the Rust document in VSCode (storage.js)
+
+1. When the Blockly code is updated, it updates the Blockly XML and the generated Rust code in the Rust document in VSCode (message.js)
+
+1. The Rust code generator for Blockly is here: [blockly-mynewt-rust](https://github.com/lupyuen/blockly-mynewt-rust)
+
+## Installation
+
 Two repositories need to be cloned into the `media` folder: [blockly-mynewt-rust](https://github.com/lupyuen/blockly-mynewt-rust) and [closure-library](https://github.com/google/closure-library):
 
 ```bash
