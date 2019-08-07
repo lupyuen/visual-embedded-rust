@@ -10,15 +10,17 @@ Read the articles:
 
 ## Overall Flow
 
-1. Main logic for the VSCode Extension is in extension.ts
+1. Main logic for the VSCode Extension is in [`extension.ts`](blob/master/src/extension.ts)
 
-1. The extension creates a WebView that embeds the HTML code from Google Blockly
+1. The extension creates a [WebView that embeds the HTML code](blob/master/src/extension.ts#L250-L732) from Google Blockly
 
-1. When the WebView loads, it fetches the Blockly XML embedded in the Rust document in VSCode (storage.js)
+1. [When the WebView loads](blob/master/media/vscode/storage.js#L58-L69), it fetches the (Blockly XML embedded)[blob/master/src/extension.ts#L141-L163] in the Rust document in VSCode and (refreshes the Blockly workspace)[blob/master/media/vscode/message.js#L36-L55]
 
-1. When the Blockly code is updated, it updates the Blockly XML and the generated Rust code in the Rust document in VSCode (message.js)
+1. When the [Blockly workspace is updated](blob/master/media/vscode/storage.js#L165-L194), it sends the [updated Blockly XML and the generated Rust code](blob/master/media/vscode/message.js#L59-L68) to the VSCode Extension.  The extension (updates the Rust document)[blob/master/src/extension.ts#L165-L184] in VSCode.
 
-1. The Rust code generator for Blockly is here: [blockly-mynewt-rust](https://github.com/lupyuen/blockly-mynewt-rust)
+1. The Rust code generator for Blockly is here: [blockly-mynewt-rust](https://github.com/lupyuen/blockly-mynewt-rust/tree/master/generators/rust)
+
+1. [Demo Rust source file is here](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/rust/visual/src/lib.rs)
 
 ## Installation
 
