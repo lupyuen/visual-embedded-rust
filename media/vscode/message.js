@@ -24,7 +24,7 @@
  */
 'use strict';
 
-// Handle the message inside the webview
+// Handle the message received from VSCode
 window.addEventListener('message', event => {
     const message = event.data; // The JSON data our extension sent
     console.log(['recv msg', JSON.stringify(message).substr(0, 10)]);

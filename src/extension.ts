@@ -69,6 +69,7 @@ class CatCodingPanel {
 	private readonly _panel: vscode.WebviewPanel;
 	private readonly _extensionPath: string;
 	private _disposables: vscode.Disposable[] = [];
+	private _editor: vscode.TextEditor | undefined;
 
 	public static createOrShow(extensionPath: string) {
 		console.log('createOrShow');
@@ -138,18 +139,19 @@ class CatCodingPanel {
 					
 					//  Restore code blocks. Read the contexts of the active text editor and send to webview to load.
 					case 'restoreBlocks':	
-						// Get the active text editor
+						// Get the active text editor. If none active, return the last active one.
 						let editor = vscode.window.activeTextEditor;
-						if (!editor) { console.log('No active editor'); return; }
-
-						// If filename is not *.rs, quit.
-						let document = editor.document;  if (!document) { console.log('Missing document'); return; }
-						let fileName = document.fileName; if (!fileName) { console.log('Missing filename'); return; }
-						if (!fileName.endsWith(".rs") && !fileName.endsWith(".RS")) { console.log('Not a .rs file'); return; }
+						if (!editor || !CatCodingPanel._isValidEditor(editor)) { 
+							editor = this._editor; 
+							if (!editor || !CatCodingPanel._isValidEditor(editor)) { console.log('No active editor'); return; }
+						}
 
 						// Get the text of the doc.
-						const text = document.getText();
+						const text = editor.document.getText();
 						if (!text) { console.log('Missing text'); return; }
+
+						//  Remember the active text editor. We will return this at the next call.
+						this._editor = editor;
 
 						// Send a `load` message to our webview with the text.
 						this._panel.webview.postMessage({ 
@@ -192,6 +194,20 @@ class CatCodingPanel {
 				x.dispose();
 			}
 		}
+	}
+
+	private static _isValidEditor(editor: vscode.TextEditor): boolean {
+		//  Return true if this is a valid TextEditor with a valid *.rs Visual Rust program.
+		// If filename is not *.rs, reuse the last active editor.
+		if (!editor.document) { console.log('Missing document'); return false; }
+		const filename = editor.document.fileName;
+		if (!filename) { console.log('Missing filename'); return false; } 
+		if (!filename.endsWith(".rs") && !filename.endsWith(".RS")) { console.log('Not a .rs file'); return false; }							
+
+		// Get the text of the doc.
+		const text = editor.document.getText();
+		if (!text) { console.log('Missing text'); return false; }
+		return true;
 	}
 
 	private _update() {
@@ -295,7 +311,7 @@ class CatCodingPanel {
 
 		  <!--  Load Main Program  -->
 		  <script nonce="${nonce}" src="${blocklyUri}/demos/code/code.js"></script>
-		  
+
 		</head>
 		<body>
 		  <table width="100%" height="100%">
