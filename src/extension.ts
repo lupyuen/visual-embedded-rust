@@ -182,6 +182,34 @@ class CatCodingPanel {
 						});	
 						return;
 					}
+					
+					//  Show an OK/Cancel confirmation message. Post the result (true for OK) back to WebView.
+					case 'confirm': {
+						const msg = message.message;
+						vscode.window.showInformationMessage(msg, 'OK', 'Cancel')
+							.then(selected => this._panel.webview.postMessage({ 
+								command: 'confirmResult',
+								result:  (selected === 'OK'),
+							}));
+						return;						
+					}					
+
+					//  Prompt for input. Post the result back to WebView.
+					case 'prompt': {
+						const msg = message.message;
+						const defaultValue = message.defaultValue;
+						vscode.window.showInputBox({
+							prompt: message,
+							value:  defaultValue,        
+						})
+							.then(result => this._panel.webview.postMessage({ 
+								command: 'promptResult',
+								result:  result,
+							}));
+						return;						
+					}					
+
+					default: console.error('Unknown message: ' + JSON.stringify(message));											
 				}
 			},
 			null,
@@ -210,7 +238,7 @@ class CatCodingPanel {
 	}
 
 	private static _isValidEditor(editor: vscode.TextEditor): boolean {
-		//  Return true if this is a valid TextEditor with a valid *.rs Visual Rust program.
+		// Return true if this is a valid TextEditor with a valid *.rs Visual Rust program.
 		// If filename is not *.rs, reuse the last active editor.
 		if (!editor.document) { console.log('Missing document'); return false; }
 		const filename = editor.document.fileName;
@@ -253,7 +281,7 @@ class CatCodingPanel {
 			path.join(this._extensionPath, 'media')
 		);
 
-		// And the uri we use to load this script in the webview
+		// URIs we use to load this script in the webview
 		const scriptUri = scriptPathOnDisk.with({ scheme: 'vscode-resource' });		
 		const vscodeUri = scriptUri + '/vscode';  //  VSCode integration scripts
 		const blocklyUri = scriptUri + '/blockly-mynewt-rust';  //  Blockly scripts
@@ -261,7 +289,7 @@ class CatCodingPanel {
 		// Use a nonce to whitelist which scripts can be run
 		const nonce = getNonce();
 
-		//  From media/blockly-mynewt-rust/demos/code/index.html
+		//  Derived from media/blockly-mynewt-rust/demos/code/index.html, customised for VSCode
 		//  TODO: Add security policy
 		return `<!DOCTYPE html>
 		<html>
@@ -287,8 +315,8 @@ class CatCodingPanel {
 		  <script nonce="${nonce}" src="${blocklyUri}/msg/js/en.js"></script>
 		  <script nonce="${nonce}" src="${blocklyUri}/demos/code/msg/en.js"></script>
 
-		  <!--  VSCode Storage Integration and Alerts  -->
-		  <script nonce="${nonce}" src="${vscodeUri}/alert.js"></script>
+		  <!--  VSCode Integration for Modal Prompts, Storage and Messaging  -->
+		  <script nonce="${nonce}" src="${vscodeUri}/modal.js"></script>
 		  <script nonce="${nonce}" src="${vscodeUri}/storage.js"></script>
 		  <script nonce="${nonce}" src="${vscodeUri}/message.js"></script>
   

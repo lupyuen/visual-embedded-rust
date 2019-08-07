@@ -28,13 +28,16 @@
 var blocks_begin = '-- BEGIN BLOCKS --';
 var blocks_end   = '-- END BLOCKS --';
 
+//  Callbacks for confirm and promp modals.
+var confirmResult, promptResult;
+
 // Handle the message received from VSCode
 window.addEventListener('message', event => {
     const message = event.data; // The JSON data our extension sent
     console.log(['recv msg', JSON.stringify(message).substr(0, 20)]);
     switch (message.command) {
         //  Load the blocks into the workspace.
-        case 'loadDoc':
+        case 'loadDoc': {
             //  Text contains `... /* -- BEGIN BLOCKS -- ... -- END BLOCKS -- */`. Extract the blocks.            
             const text = message.text;
             console.log(['loadDoc', text.substr(0, 20)]);
@@ -53,6 +56,23 @@ window.addEventListener('message', event => {
             //  Monitor changes and sync updates to the VSCode document.
             BlocklyStorage.monitorChanges_(workspace);            
             return;
+        }
+
+        //  Receive confirm result from VSCode. We trigger the confirm callback.
+        case 'confirmResult': {
+            const result = message.result;
+            if (confirmResult) { confirmResult(result); }
+            return;
+        }
+
+        //  Receive prompt result from VSCode. We trigger the prompt callback.
+        case 'promptResult': {
+            const result = message.result;
+            if (promptResult) { promptResult(result); }
+            return;
+        }
+
+        default: console.error('Unknown message: ' + JSON.stringify(message));
     }
 });
 
