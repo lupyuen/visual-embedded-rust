@@ -1,5 +1,7 @@
 # visual-embedded-rust: Visual Studio Extension for Visual Embedded Rust
 
+Watch the demo: https://youtu.be/jYo8B8c7T3Y
+
 Two repositories need to be cloned into the `media` folder: [blockly-mynewt-rust](https://github.com/lupyuen/blockly-mynewt-rust) and [closure-library](https://github.com/google/closure-library):
 
 ```bash
