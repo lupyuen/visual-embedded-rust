@@ -1,4 +1,14 @@
-# visual-embedded-rust README
+# visual-embedded-rust: Visual Studio Extension for Visual Embedded Rust
+
+Two repositories need to be cloned into the `media` folder: [blockly-mynewt-rust](https://github.com/lupyuen/blockly-mynewt-rust) and [closure-library](https://github.com/google/closure-library):
+
+```bash
+cd media
+git clone https://github.com/lupyuen/blockly-mynewt-rust
+git clone https://github.com/google/closure-library
+```
+
+## TODO
 
 This is the README for your extension "visual-embedded-rust". After writing up a brief description, we recommend including the following sections.
 

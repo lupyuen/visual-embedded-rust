@@ -140,26 +140,33 @@ class CatCodingPanel {
 					case 'restoreBlocks':	
 						// Get the active text editor
 						let editor = vscode.window.activeTextEditor;
-						if (editor) {
-							let document = editor.document;
-							console.log(['doc', document.fileName, document.lineCount]);
-							/*
-							let selection = editor.selection;
-							// Get the word within the selection
-							let word = document.getText(selection);
-							let reversed = word.split('').reverse().join('');
-							editor.edit(editBuilder => {
-								editBuilder.replace(selection, reversed);
-							});
-							*/
-						}
+						if (!editor) { console.log('No active editor'); return; }
 
-						// Send a message to our webview.
+						// If filename is not *.rs, quit.
+						let document = editor.document;  if (!document) { console.log('Missing document'); return; }
+						let fileName = document.fileName; if (!fileName) { console.log('Missing filename'); return; }
+						if (!fileName.endsWith(".rs") && !fileName.endsWith(".RS")) { console.log('Not a .rs file'); return; }
+
+						// Get the text of the doc.
+						const text = document.getText();
+						if (!text) { console.log('Missing text'); return; }
+
+						// Send a `load` message to our webview with the text.
 						this._panel.webview.postMessage({ 
 							command: 'load',
-							blocks: 'abcdef',
+							text:    text,
 						});
 						return;
+						
+						/*
+						let selection = editor.selection;
+						// Get the word within the selection
+						let word = document.getText(selection);
+						let reversed = word.split('').reverse().join('');
+						editor.edit(editBuilder => {
+							editBuilder.replace(selection, reversed);
+						});
+						*/
 				}
 			},
 			null,
@@ -232,11 +239,15 @@ class CatCodingPanel {
 		<head>
 		  <meta charset="utf-8">
 		  <meta name="google" value="notranslate">
-		  <title>Blockly Demo:</title>
+		  <title>Visual Embedded Rust</title>
+
+		  <!--  Load Blockly Stylesheet and our override  -->
 		  <link rel="stylesheet" href="${blocklyUri}/demos/code/style.css">
+		  <link rel="stylesheet" href="${vscodeUri}/style.css">
 		  
 		  <script>
 		  //  Capture the vscode object for messaging the VSCode Extension.
+		  //  TODO: Remove from global space.
 		  var vscode = acquireVsCodeApi();
 		  </script>
 
@@ -247,7 +258,8 @@ class CatCodingPanel {
 		  <script nonce="${nonce}" src="${blocklyUri}/msg/js/en.js"></script>
 		  <script nonce="${nonce}" src="${blocklyUri}/demos/code/msg/en.js"></script>
 
-		  <!--  VSCode Storage Integration  -->
+		  <!--  VSCode Storage Integration and Alerts  -->
+		  <script nonce="${nonce}" src="${vscodeUri}/alert.js"></script>
 		  <script nonce="${nonce}" src="${vscodeUri}/storage.js"></script>
 		  <script nonce="${nonce}" src="${vscodeUri}/message.js"></script>
   
@@ -263,10 +275,13 @@ class CatCodingPanel {
 
 		  <!--  Load Rust Code Generator  -->
 		  <script nonce="${nonce}" src="${blocklyUri}/generators/rust.js"></script>
+
 		  <!--  Load Mynewt Blocks  -->
 		  <script nonce="${nonce}" src="${blocklyUri}/generators/rust/mynewt_blocks.js"></script>
+
 		  <!--  Load Mynewt Functions  -->
 		  <script nonce="${nonce}" src="${blocklyUri}/generators/rust/mynewt_functions.js"></script>
+
 		  <!--  Load Rust Functions. TODO: Package into rust_compressed.js  -->
 		  <script nonce="${nonce}" src="${blocklyUri}/generators/rust/colour.js"></script>
 		  <script nonce="${nonce}" src="${blocklyUri}/generators/rust/lists.js"></script>
@@ -277,10 +292,10 @@ class CatCodingPanel {
 		  <script nonce="${nonce}" src="${blocklyUri}/generators/rust/text.js"></script>
 		  <script nonce="${nonce}" src="${blocklyUri}/generators/rust/variables.js"></script>  
 		  <script nonce="${nonce}" src="${blocklyUri}/generators/rust/variables_dynamic.js"></script>
-		  <!--  TODO: End  -->
 
 		  <!--  Load Main Program  -->
 		  <script nonce="${nonce}" src="${blocklyUri}/demos/code/code.js"></script>
+		  
 		</head>
 		<body>
 		  <table width="100%" height="100%">

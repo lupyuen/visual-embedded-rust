@@ -19,7 +19,7 @@
  */
 
 /**
- * @fileoverview Handle incoming messages from VSCode
+ * @fileoverview Handle command messages from VSCode
  * @author luppy@appkaki.com (Lee Lup Yuen)
  */
 'use strict';
@@ -27,20 +27,24 @@
 // Handle the message inside the webview
 window.addEventListener('message', event => {
     const message = event.data; // The JSON data our extension sent
-    console.log(['recv msg', JSON.stringify(message)]);
+    console.log(['recv msg', JSON.stringify(message).substr(0, 10)]);
     switch (message.command) {
+        //  Load the blocks into the workspace.
         case 'load':
-            const blocks = message.blocks;
-            console.log(['load', blocks]);
+            //  Text contains `... /* -- BEGIN BLOCKS -- ... -- END BLOCKS -- */`. Extract the blocks.            
+            const text = message.text;
+            console.log(['load', text.substr(0, 10)]);
+
+            const beginSplit = text.split('-- BEGIN BLOCKS --', 2);
+            if (beginSplit.length < 2) { console.log('"-- BEGIN BLOCKS --" not found'); return; }
+            const endSplit = beginSplit[1].split('-- END BLOCKS --', 2);
+            if (endSplit.length < 2) { console.log('"-- END BLOCKS --" not found'); return; }
+            const blocks = endSplit[0];
+
+            //  Set the blocks in the workspace.
+            var workspace = Blockly.getMainWorkspace();  if (!workspace) { console.log('Missing workspace'); return; }
+            var xml = Blockly.Xml.textToDom(blocks);
+            Blockly.Xml.domToWorkspace(xml, workspace);
             return;
-
-            /* TODO
-            if ('localStorage' in window && window.localStorage[url]) {
-                var workspace = opt_workspace || Blockly.getMainWorkspace();
-                var xml = Blockly.Xml.textToDom(window.localStorage[url]);
-                Blockly.Xml.domToWorkspace(xml, workspace);
-            }
-            */
-
     }
 });

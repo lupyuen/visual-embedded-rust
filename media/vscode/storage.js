@@ -66,14 +66,6 @@ BlocklyStorage.restoreBlocks = function(opt_workspace) {
     command: 'restoreBlocks',
     url: url
   });
-
-  /* TODO
-  if ('localStorage' in window && window.localStorage[url]) {
-    var workspace = opt_workspace || Blockly.getMainWorkspace();
-    var xml = Blockly.Xml.textToDom(window.localStorage[url]);
-    Blockly.Xml.domToWorkspace(xml, workspace);
-  }
-  */
 };
 
 /**
