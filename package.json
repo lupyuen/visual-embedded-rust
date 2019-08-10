@@ -46,16 +46,16 @@
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"id": "package-explorer",
+					"id": "visual-embedded-rust-declarations",
 					"title": "Declarations",
 					"icon": "media/dep.svg"
 				}
 			]
 		},
 		"views": {
-			"package-explorer": [
+			"visual-embedded-rust-declarations": [
 				{
-					"id": "nodeDependencies",
+					"id": "visualEmbeddedRustDeclarations",
 					"name": "Mynewt API & Inferred Declarations"
 				}
 			]

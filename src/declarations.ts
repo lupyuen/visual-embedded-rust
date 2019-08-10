@@ -61,7 +61,7 @@ function getNode(key: string): Node {
 	return nodes[key];
 }
 
-export class DepNodeProvider implements vscode.TreeDataProvider<Node> {
+export class DeclarationsProvider implements vscode.TreeDataProvider<Node> {
 
 	private _onDidChangeTreeData: vscode.EventEmitter<Node | undefined> = new vscode.EventEmitter<Node | undefined>();
 	readonly onDidChangeTreeData: vscode.Event<Node | undefined> = this._onDidChangeTreeData.event;
