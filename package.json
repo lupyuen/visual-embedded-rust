@@ -56,7 +56,7 @@
 			"visual-embedded-rust-declarations": [
 				{
 					"id": "visualEmbeddedRustDeclarations",
-					"name": "Mynewt API & Inferred Declarations"
+					"name": "Mynewt API"
 				}
 			]
 		},

@@ -116,14 +116,14 @@ class DeclarationsProvider implements vscode.TreeDataProvider<Node> {
 //  Called when VSCode is activated
 export function activate(context: vscode.ExtensionContext) {
 	//  Create the Tree View.
-	const declarationsProvider = new DeclarationsProvider(vscode.workspace.rootPath || '');
+	const provider = new DeclarationsProvider(vscode.workspace.rootPath || '');
 	const treeView = vscode.window.createTreeView('visualEmbeddedRustDeclarations', {
-		treeDataProvider: declarationsProvider
+		treeDataProvider: provider
 	});
 
 	//  Register the commands.
 	vscode.commands.registerCommand('visualEmbeddedRustDeclarations.refreshEntry', 
-		() => declarationsProvider.refresh());
+		() => provider.refresh());
 
 	vscode.commands.registerCommand('extension.openPackageOnNpm', 
 		moduleName => vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(`https://www.npmjs.com/package/${moduleName}`)));
