@@ -8,61 +8,121 @@ import * as decorate from './decorate';
 let replayLog: string[] = [];
 
 //  Current editor
-let editor: vscode.TextEditor | undefined = undefined;
+//  let editor: vscode.TextEditor | undefined = undefined;
 
 //  Current timeout
-let timeout: NodeJS.Timer | undefined = undefined;
+//  let timeout: NodeJS.Timer | undefined = undefined;
 
 //  Called when VSCode is activated
 export function activate(context: vscode.ExtensionContext) {
-    editor = vscode.window.activeTextEditor;
-    if (!editor) { return; }
+    console.log('replay is activated');
+    
+    //  Read the entire replay log and break into lines.
+    if (replayLog.length === 0) {
+        const replayPath = path.join(__filename, '..', '..', 'resources', 'replay.log');
+        const buf = fs.readFileSync(replayPath);
+        const log = buf.toString();
+        replayLog = log.split('\n');
+        console.log('replay read log: ' + replayLog.length);    
+    }
 
-    //  Read the entire replay file and break into lines.
-    const replayPath = path.join(__filename, '..', '..', 'resources', 'replay.log');
-    const buf = fs.readFileSync(replayPath);
-    const log = buf.toString();
-    replayLog = log.split('\n');
+	let timeout: NodeJS.Timer | undefined = undefined;
+	let activeEditor = vscode.window.activeTextEditor;
+	if (activeEditor) {
+		triggerUpdateDecorations();
+	}
+	vscode.window.onDidChangeActiveTextEditor(editor => {
+		activeEditor = editor;
+		if (editor) {
+			triggerUpdateDecorations();
+		}
+	}, null, context.subscriptions);
+	vscode.workspace.onDidChangeTextDocument(event => {
+		if (activeEditor && event.document === activeEditor.document) {
+			triggerUpdateDecorations();
+		}
+	}, null, context.subscriptions);
+	function triggerUpdateDecorations() {
+		if (timeout) {
+            clearInterval(timeout);
+			timeout = undefined;
+		}
+		timeout = setInterval(() => {
+            if (activeEditor) {
+                replay(activeEditor);
+            }
+        }, 5 * 1000);
+	}
 
+    /*
+    //  Pause a while before replay, so user can switch to Rust editor.
     if (timeout) {
         clearTimeout(timeout);
         timeout = undefined;
     }
-    timeout = setTimeout(() => replay(), 10 * 1000);
+    timeout = setTimeout(() => {
+        editor = vscode.window.activeTextEditor;
+        if (!editor) { 
+            console.log('replay no editor');
+            return; 
+        }    
+        replay();
+    }, 20 * 1000);
+    */
 }
 
-function replay() {
+let lastStartRow: number = 0;
+let lastStartCol: number = 0;
+let lastEndRow: number = 0;
+let lastEndCol: number = 0;
+
+function replay(editor: vscode.TextEditor) {
     //  Replay one line of the log.
     if (!editor) { return; }
     for (;;) {
         //  Look for lines starting with "#".
         if (replayLog.length === 0) { return; }
         const line = replayLog.shift();
-        if (!line) { return; }
-        if (!line.startsWith('#')) { continue; }
+        console.log('replay: ' + line);
+        if (line === undefined || !line.startsWith('#')) { continue; }
+        console.log('replay1: ' + line);
 
         if (line.startsWith("#s")) {
-            //  #s src/main.rs | 43 | 8 | 43 | 51
+            //  Span: #s src/main.rs | 43 | 8 | 43 | 51
             const s = line.split('|');
-            decorate.decorate(
-                editor,
-                parseInt(s[1]) - 1,
-                parseInt(s[2]) - 1,
-                parseInt(s[3]) - 1,
-                parseInt(s[4]) - 1,
-            );
+            const startRow = parseInt(s[1]) - 1;
+            const startCol = parseInt(s[2]); 
+            const endRow = parseInt(s[3]) - 1; 
+            const endCol = parseInt(s[4]);
+
+            //  If unchanged, fetch next line.
+            if (startRow === lastStartRow
+                && startCol === lastStartCol
+                && endRow === lastEndRow
+                && endCol === lastEndCol) {
+                continue;
+            }
+
+            //  Decorate the span.
+            decorate.decorate(editor, startRow, startCol, endRow, endCol);
+            lastStartRow = startRow;
+            lastStartCol = startCol;
+            lastEndRow = endRow;
+            lastEndCol = endCol;
         } else if (line.startsWith("#m")) {
-            //  #m sensor::set_poll_rate_ms | src/main.rs | 43 | 8 | 43 | 51
+            //  Match: #m sensor::set_poll_rate_ms | src/main.rs | 43 | 8 | 43 | 51
 
         } else if (line.startsWith("#i")) {
-            //  #i start_sensor_listener | sensor | sensor::set_poll_rate_ms | devname | &Strn
+            //  Infer: #i start_sensor_listener | sensor | sensor::set_poll_rate_ms | devname | &Strn
 
         } else { continue; }
         break;
     }
+    /*
     if (timeout) {
         clearTimeout(timeout);
         timeout = undefined;
     }
     timeout = setTimeout(() => replay(), 10 * 1000);
+    */
 }

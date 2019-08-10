@@ -29,8 +29,8 @@ export function decorate(editor: vscode.TextEditor, startLine: number, startCol:
 	const smallNumbers: vscode.DecorationOptions[] = [];
 	const largeNumbers: vscode.DecorationOptions[] = [];
 
-	const startPos = new vscode.Position(1, 1);
-	const endPos = new vscode.Position(1, 5);
+	const startPos = new vscode.Position(startLine, startCol);
+	const endPos = new vscode.Position(endLine, endCol);
 	const decoration = { 
 		range: new vscode.Range(startPos, endPos), 
 		hoverMessage: '' 
