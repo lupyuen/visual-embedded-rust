@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as web from './web';
 import * as decorate from './decorate';
-import { DeclarationsProvider, Node } from './declarations';
+import * as declarations from './declarations';
 
 const cats = {
 	'Coding Cat': 'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif',
@@ -57,17 +57,11 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(disposable);
 
-	// Call the decorators.
+	// Activate the decorators.
 	decorate.activate(context);
 
-	// Register the provider for a Tree View
-	const declarationsProvider = new DeclarationsProvider(vscode.workspace.rootPath || '');
-	vscode.window.registerTreeDataProvider('visualEmbeddedRustDeclarations', declarationsProvider);
-	vscode.commands.registerCommand('visualEmbeddedRustDeclarations.refreshEntry', () => declarationsProvider.refresh());
-	vscode.commands.registerCommand('extension.openPackageOnNpm', moduleName => vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(`https://www.npmjs.com/package/${moduleName}`)));
-	vscode.commands.registerCommand('visualEmbeddedRustDeclarations.addEntry', () => vscode.window.showInformationMessage(`Successfully called add entry.`));
-	vscode.commands.registerCommand('visualEmbeddedRustDeclarations.editEntry', (node: Node) => vscode.window.showInformationMessage(`Successfully called edit entry on ${node.label}.`));
-	vscode.commands.registerCommand('visualEmbeddedRustDeclarations.deleteEntry', (node: Node) => vscode.window.showInformationMessage(`Successfully called delete entry on ${node.label}.`));
+	// Activate the declaration view.
+	declarations.activate(context);
 }
 
 /**

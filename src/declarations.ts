@@ -27,6 +27,34 @@ let tree: any = {
 //  List of nodes indexed by name
 let nodes: {[name: string]: Node} = {};
 
+//  Each node of the tree
+class Node extends vscode.TreeItem {
+	constructor(
+        public readonly key: string,
+		public readonly label: string,
+		private version: string,
+		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
+		public readonly command?: vscode.Command
+	) {
+		super(label, collapsibleState);
+	}
+
+	get tooltip(): string {
+		return `${this.label}-${this.version}`;
+	}
+
+	get description(): string {
+		return this.version;
+	}
+
+	iconPath = {
+		light: 	path.join(__filename, '..', '..', 'resources', 'light', 'folder.svg'),
+		dark: 	path.join(__filename, '..', '..', 'resources', 'dark',  'folder.svg')
+	};
+
+	contextValue = 'Node';
+}
+
 function getChildren(key: string): string[] {
 	if (!key) {
 		return Object.keys(tree);
@@ -61,7 +89,7 @@ function getNode(key: string): Node {
 	return nodes[key];
 }
 
-export class DeclarationsProvider implements vscode.TreeDataProvider<Node> {
+class DeclarationsProvider implements vscode.TreeDataProvider<Node> {
 
 	private _onDidChangeTreeData: vscode.EventEmitter<Node | undefined> = new vscode.EventEmitter<Node | undefined>();
 	readonly onDidChangeTreeData: vscode.Event<Node | undefined> = this._onDidChangeTreeData.event;
@@ -85,29 +113,25 @@ export class DeclarationsProvider implements vscode.TreeDataProvider<Node> {
     constructor(private workspaceRoot: string) {}
 }
 
-export class Node extends vscode.TreeItem {
-	constructor(
-        public readonly key: string,
-		public readonly label: string,
-		private version: string,
-		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-		public readonly command?: vscode.Command
-	) {
-		super(label, collapsibleState);
-	}
+//  Called when VSCode is activated
+export function activate(context: vscode.ExtensionContext) {
+	//  Register the provider for the Tree View.
+	const declarationsProvider = new DeclarationsProvider(vscode.workspace.rootPath || '');
+	vscode.window.registerTreeDataProvider('visualEmbeddedRustDeclarations', declarationsProvider);
 
-	get tooltip(): string {
-		return `${this.label}-${this.version}`;
-	}
+	//  Register the commands.
+	vscode.commands.registerCommand('visualEmbeddedRustDeclarations.refreshEntry', 
+		() => declarationsProvider.refresh());
 
-	get description(): string {
-		return this.version;
-	}
+	vscode.commands.registerCommand('extension.openPackageOnNpm', 
+		moduleName => vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(`https://www.npmjs.com/package/${moduleName}`)));
 
-	iconPath = {
-		light: path.join(__filename, '..', '..', 'resources', 'light', 'Node.svg'),
-		dark: path.join(__filename, '..', '..', 'resources', 'dark', 'Node.svg')
-	};
+	vscode.commands.registerCommand('visualEmbeddedRustDeclarations.addEntry', 
+		() => vscode.window.showInformationMessage(`Successfully called add entry.`));
 
-	contextValue = 'Node';
+	vscode.commands.registerCommand('visualEmbeddedRustDeclarations.editEntry', 
+		(node: Node) => vscode.window.showInformationMessage(`Successfully called edit entry on ${node.label}.`));
+
+	vscode.commands.registerCommand('visualEmbeddedRustDeclarations.deleteEntry', 
+		(node: Node) => vscode.window.showInformationMessage(`Successfully called delete entry on ${node.label}.`));	
 }

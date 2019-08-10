@@ -1,9 +1,8 @@
 import * as vscode from 'vscode';
 
-// this method is called when vs code is activated
+// Called when vs code is activated
 export function activate(context: vscode.ExtensionContext) {
-
-	console.log('decorator sample is activated');
+	//  console.log('decorate is activated');
 
 	let timeout: NodeJS.Timer | undefined = undefined;
 
