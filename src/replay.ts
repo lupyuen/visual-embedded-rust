@@ -51,7 +51,7 @@ export function activate(context: vscode.ExtensionContext) {
             if (activeEditor) {
                 replay(activeEditor);
             }
-        }, 5 * 1000);
+        }, 1 * 1000);
 	}
 
     /*
