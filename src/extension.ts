@@ -7,6 +7,7 @@ import * as path from 'path';
 import * as web from './web';
 import * as decorate from './decorate';
 import * as declarations from './declarations';
+import * as replay from './replay';
 
 const cats = {
 	'Coding Cat': 'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif',
@@ -62,6 +63,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Activate the declaration view.
 	declarations.activate(context);
+
+	// Load the replay log.
+	replay.activate(context);
 }
 
 /**
