@@ -10,7 +10,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.helloWorld",
+		"onCommand:visualEmbeddedRust.helloWorld",
 		"onCommand:visualEmbeddedRust.start",
 		"onCommand:visualEmbeddedRust.doRefactor",
 		"onWebviewPanel:catCoding"
@@ -19,8 +19,9 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.helloWorld",
-				"title": "Hello World"
+				"command": "visualEmbeddedRust.helloWorld",
+				"title": "Hello World",
+				"category": "Visual Embedded Rust"
 			},
 			{
 				"command": "visualEmbeddedRust.start",
