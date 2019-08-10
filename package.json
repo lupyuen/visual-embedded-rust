@@ -11,8 +11,8 @@
 	],
 	"activationEvents": [
 		"onCommand:extension.helloWorld",
-		"onCommand:catCoding.start",
-		"onCommand:catCoding.doRefactor",
+		"onCommand:visualEmbeddedRust.start",
+		"onCommand:visualEmbeddedRust.doRefactor",
 		"onWebviewPanel:catCoding"
 	],
 	"main": "./out/extension.js",
@@ -23,20 +23,20 @@
 				"title": "Hello World"
 			},
 			{
-				"command": "catCoding.start",
-				"title": "Visual Embedded Rust",
-				"category": "Cat Coding"
+				"command": "visualEmbeddedRust.start",
+				"title": "Visual editor",
+				"category": "Visual Embedded Rust"
 			},
 			{
-				"command": "catCoding.doRefactor",
+				"command": "visualEmbeddedRust.doRefactor",
 				"title": "Do some refactoring",
-				"category": "Cat Coding"
+				"category": "Visual Embedded Rust"
 			}
 		],
 		"menus": {
 			"editor/title": [
 				{
-					"command": "catCoding.start",
+					"command": "visualEmbeddedRust.start",
 					"group": "navigation",
 					"when": "resourceExtname == .rs"
 				}

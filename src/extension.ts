@@ -20,13 +20,13 @@ export function activate(context: vscode.ExtensionContext) {
 	console.log('Congratulations, your extension "visual-embedded-rust" is now active!');
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand('catCoding.start', () => {
+		vscode.commands.registerCommand('visualEmbeddedRust.start', () => {
 			CatCodingPanel.createOrShow(context.extensionPath);
 		})
 	);
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand('catCoding.doRefactor', () => {
+		vscode.commands.registerCommand('visualEmbeddedRust.doRefactor', () => {
 			if (CatCodingPanel.currentPanel) {
 				CatCodingPanel.currentPanel.doRefactor();
 			}
