@@ -43,6 +43,29 @@
 				}
 			]
 		},
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "package-explorer",
+					"title": "Package Explorer",
+					"icon": "media/dep.svg"
+				}
+			]
+		},
+		"views": {
+			"package-explorer": [
+				{
+					"id": "nodeDependencies",
+					"name": "Node Dependencies"
+				}
+			],
+			"explorer": [
+				{
+					"id": "testView",
+					"name": "Test View"
+				}
+			]
+		},
 		"colors": [
 			{
 				"id": "visualEmbeddedRust.largeNumberBackground",

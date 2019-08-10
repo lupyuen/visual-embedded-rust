@@ -6,6 +6,8 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as web from './web';
 import * as decorate from './decorate';
+import { DepNodeProvider, Dependency } from './nodeDependencies';
+import { TestView } from './testView';
 
 const cats = {
 	'Coding Cat': 'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif',
@@ -58,6 +60,18 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Call the decorators.
 	decorate.activate(context);
+
+	// Samples of `window.registerTreeDataProvider`
+	const nodeDependenciesProvider = new DepNodeProvider(vscode.workspace.rootPath || '');
+	vscode.window.registerTreeDataProvider('nodeDependencies', nodeDependenciesProvider);
+	vscode.commands.registerCommand('nodeDependencies.refreshEntry', () => nodeDependenciesProvider.refresh());
+	vscode.commands.registerCommand('extension.openPackageOnNpm', moduleName => vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(`https://www.npmjs.com/package/${moduleName}`)));
+	vscode.commands.registerCommand('nodeDependencies.addEntry', () => vscode.window.showInformationMessage(`Successfully called add entry.`));
+	vscode.commands.registerCommand('nodeDependencies.editEntry', (node: Dependency) => vscode.window.showInformationMessage(`Successfully called edit entry on ${node.label}.`));
+	vscode.commands.registerCommand('nodeDependencies.deleteEntry', (node: Dependency) => vscode.window.showInformationMessage(`Successfully called delete entry on ${node.label}.`));
+	
+	// Test View
+	const testView = new TestView(context);
 }
 
 /**
@@ -136,7 +150,7 @@ class CatCodingPanel {
 		// Handle messages from the webview
 		this._panel.webview.onDidReceiveMessage(
 			message => {
-				console.log(['onDidReceiveMessage', JSON.stringify(message).substr(0, 50)]);
+				console.log(JSON.stringify({onDidReceiveMessage: JSON.stringify(message).substr(0, 50)}));
 				switch (message.command) {
 					case 'alert': {
 						vscode.window.showErrorMessage(message.text);
