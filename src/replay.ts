@@ -118,11 +118,4 @@ function replay(editor: vscode.TextEditor) {
         } else { continue; }
         break;
     }
-    /*
-    if (timeout) {
-        clearTimeout(timeout);
-        timeout = undefined;
-    }
-    timeout = setTimeout(() => replay(), 10 * 1000);
-    */
 }
