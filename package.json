@@ -24,7 +24,7 @@
 			},
 			{
 				"command": "catCoding.start",
-				"title": "Start cat coding session",
+				"title": "Visual Embedded Rust",
 				"category": "Cat Coding"
 			},
 			{
@@ -32,7 +32,16 @@
 				"title": "Do some refactoring",
 				"category": "Cat Coding"
 			}
-		]
+		],
+		"menus": {
+			"editor/title": [
+				{
+					"command": "catCoding.start",
+					"group": "navigation",
+					"when": "resourceExtname == .rs"
+				}
+			]
+		}		
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
