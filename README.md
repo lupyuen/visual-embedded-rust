@@ -12,7 +12,7 @@ Read the articles:
 
 1. Main logic for the VSCode Extension is in [`extension.ts`](src/extension.ts)
 
-1. The extension creates a [WebView that embeds the HTML code](src/extension.ts#L250-L732) from Google Blockly
+1. The extension creates a [WebView that embeds the HTML code](src/extension.ts#L250-L732) from Google Blockly. [HTML code is here](src/web.ts)
 
 1. [When the WebView loads](media/vscode/storage.js#L58-L69), it fetches the [Blockly XML embedded](src/extension.ts#L141-L163) in the Rust document in VSCode and [refreshes the Blockly workspace](media/vscode/message.js#L36-L55)
 

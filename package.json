@@ -42,7 +42,18 @@
 					"when": "resourceExtname == .rs"
 				}
 			]
-		}		
+		},
+		"colors": [
+			{
+				"id": "visualEmbeddedRust.largeNumberBackground",
+				"description": "Background decoration color for large numbers",
+				"defaults": {
+					"dark": "#FF000055",
+					"light": "#FF000055",
+					"highContrast": "#FF000055"
+				}
+			}
+		]		
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",

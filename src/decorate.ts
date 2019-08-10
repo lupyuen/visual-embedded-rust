@@ -27,7 +27,7 @@ export function activate(context: vscode.ExtensionContext) {
 	const largeNumberDecorationType = vscode.window.createTextEditorDecorationType({
 		cursor: 'crosshair',
 		// use a themable color. See package.json for the declaration and default values.
-		backgroundColor: { id: 'myextension.largeNumberBackground' }
+		backgroundColor: { id: 'visualEmbeddedRust.largeNumberBackground' }
 	});
 
 	let activeEditor = vscode.window.activeTextEditor;
@@ -46,11 +46,17 @@ export function activate(context: vscode.ExtensionContext) {
 			const endPos = activeEditor.document.positionAt(match.index + match[0].length);
 			const decoration = { range: new vscode.Range(startPos, endPos), hoverMessage: 'Number **' + match[0] + '**' };
 			if (match[0].length < 3) {
-				smallNumbers.push(decoration);
+				largeNumbers.push(decoration);
 			} else {
 				largeNumbers.push(decoration);
 			}
-		}
+        }
+        {
+			const startPos = new vscode.Position(1, 1);
+			const endPos = new vscode.Position(1, 5);
+			const decoration = { range: new vscode.Range(startPos, endPos), hoverMessage: 'Large number' };
+            smallNumbers.push(decoration);
+        }
 		activeEditor.setDecorations(smallNumberDecorationType, smallNumbers);
 		activeEditor.setDecorations(largeNumberDecorationType, largeNumbers);
 	}
