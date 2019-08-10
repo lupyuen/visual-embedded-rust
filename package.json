@@ -47,7 +47,7 @@
 			"activitybar": [
 				{
 					"id": "package-explorer",
-					"title": "Package Explorer",
+					"title": "Declarations",
 					"icon": "media/dep.svg"
 				}
 			]
@@ -56,13 +56,7 @@
 			"package-explorer": [
 				{
 					"id": "nodeDependencies",
-					"name": "Node Dependencies"
-				}
-			],
-			"explorer": [
-				{
-					"id": "testView",
-					"name": "Test View"
+					"name": "Mynewt API & Inferred Declarations"
 				}
 			]
 		},

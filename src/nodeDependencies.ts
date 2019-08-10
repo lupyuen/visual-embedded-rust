@@ -2,7 +2,8 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const tree = {
+//  Tree of nodes
+let tree: any = {
 	'a': {
 		'aa': {
 			'aaa': {
@@ -22,7 +23,9 @@ const tree = {
 		'bb': {}
 	}
 };
-let nodes = {};
+
+//  List of nodes indexed by name
+let nodes: {[name: string]: Node} = {};
 
 function getChildren(key: string): string[] {
 	if (!key) {
@@ -35,19 +38,10 @@ function getChildren(key: string): string[] {
 	return [];
 }
 
-function getTreeItem(key: string): vscode.TreeItem {
-	const treeElement = getTreeElement(key);
-	return {
-		label: <vscode.TreeItemLabel>{ label: key, highlights: key.length > 1 ? [[key.length - 2, key.length - 1]] : void 0},
-		tooltip: `Tooltip for ${key}`,
-		collapsibleState: treeElement && Object.keys(treeElement).length ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None
-	};
-}
-
-function getTreeElement(element): any {
+function getTreeElement(key: string): any {
 	let parent = tree;
-	for (let i = 0; i < element.length; i++) {
-		parent = parent[element.substring(0, i + 1)];
+	for (let i = 0; i < key.length; i++) {
+		parent = parent[key.substring(0, i + 1)];
 		if (!parent) {
 			return null;
 		}
@@ -55,111 +49,45 @@ function getTreeElement(element): any {
 	return parent;
 }
 
-function getNode(key: string): Dependency {
+function getNode(key: string): Node {
 	if (!nodes[key]) {
-		nodes[key] = new Key(key);
+        const treeElement = getTreeElement(key);
+        const collapsibleState = 
+            treeElement && Object.keys(treeElement).length 
+                ? vscode.TreeItemCollapsibleState.Collapsed 
+                : vscode.TreeItemCollapsibleState.None;
+        nodes[key] = new Node(key, key, "1", collapsibleState);
 	}
 	return nodes[key];
 }
 
-export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
+export class DepNodeProvider implements vscode.TreeDataProvider<Node> {
 
-	private _onDidChangeTreeData: vscode.EventEmitter<Dependency | undefined> = new vscode.EventEmitter<Dependency | undefined>();
-	readonly onDidChangeTreeData: vscode.Event<Dependency | undefined> = this._onDidChangeTreeData.event;
+	private _onDidChangeTreeData: vscode.EventEmitter<Node | undefined> = new vscode.EventEmitter<Node | undefined>();
+	readonly onDidChangeTreeData: vscode.Event<Node | undefined> = this._onDidChangeTreeData.event;
 
-    getChildren(element?: Dependency): Thenable<Dependency[]> {
-        const children = getChildren(element ? element.key : undefined)
+    getChildren(element?: Node): Thenable<Node[]> {
+        const children = getChildren(element ? element.key : "")
             .map(key => getNode(key));
         return Promise.resolve(children);
     }
 
-    getTreeItem(element: Dependency): vscode.TreeItem {
-        const treeItem = getTreeItem(element.key);
+    getTreeItem(element: Node): vscode.TreeItem {
+        const treeItem = getNode(element.key);
         treeItem.id = element.key;
         return treeItem;
     }
 
-    getParent(element: Dependency): vscode.ProviderResult<Dependency> {
-        const parentKey = key.substring(0, key.length - 1);
-        return parentKey ? new Key(parentKey) : void 0;
+    refresh(): void {
+        this._onDidChangeTreeData.fire();
     }
 
-	constructor(private workspaceRoot: string) {
-	}
-
-	refresh(): void {
-		this._onDidChangeTreeData.fire();
-	}
-
-    /*
-        getTreeItem(element: Dependency): vscode.TreeItem {
-            return element;
-        }
-
-        getChildren(element?: Dependency): Thenable<Dependency[]> {
-            if (!this.workspaceRoot) {
-                vscode.window.showInformationMessage('No dependency in empty workspace');
-                return Promise.resolve([]);
-            }
-
-            if (element) {
-                return Promise.resolve(this.getDepsInPackageJson(path.join(this.workspaceRoot, 'node_modules', element.label, 'package.json')));
-            } else {
-                const packageJsonPath = path.join(this.workspaceRoot, 'package.json');
-                if (this.pathExists(packageJsonPath)) {
-                    return Promise.resolve(this.getDepsInPackageJson(packageJsonPath));
-                } else {
-                    vscode.window.showInformationMessage('Workspace has no package.json');
-                    return Promise.resolve([]);
-                }
-            }
-
-        }
-
-        //  Given the path to package.json, read all its dependencies and devDependencies.
-        private getDepsInPackageJson(packageJsonPath: string): Dependency[] {
-            if (this.pathExists(packageJsonPath)) {
-                const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
-
-                const toDep = (moduleName: string, version: string): Dependency => {
-                    if (this.pathExists(path.join(this.workspaceRoot, 'node_modules', moduleName))) {
-                        return new Dependency(moduleName, version, vscode.TreeItemCollapsibleState.Collapsed);
-                    } else {
-                        return new Dependency(moduleName, version, vscode.TreeItemCollapsibleState.None, {
-                            command: 'extension.openPackageOnNpm',
-                            title: '',
-                            arguments: [moduleName]
-                        });
-                    }
-                };
-
-                const deps = packageJson.dependencies
-                    ? Object.keys(packageJson.dependencies).map(dep => toDep(dep, packageJson.dependencies[dep]))
-                    : [];
-                const devDeps = packageJson.devDependencies
-                    ? Object.keys(packageJson.devDependencies).map(dep => toDep(dep, packageJson.devDependencies[dep]))
-                    : [];
-                return deps.concat(devDeps);
-            } else {
-                return [];
-            }
-        }
-
-        private pathExists(p: string): boolean {
-            try {
-                fs.accessSync(p);
-            } catch (err) {
-                return false;
-            }
-
-            return true;
-        }
-    */
+    constructor(private workspaceRoot: string) {}
 }
 
-export class Dependency extends vscode.TreeItem {
-
+export class Node extends vscode.TreeItem {
 	constructor(
+        public readonly key: string,
 		public readonly label: string,
 		private version: string,
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
@@ -177,10 +105,9 @@ export class Dependency extends vscode.TreeItem {
 	}
 
 	iconPath = {
-		light: path.join(__filename, '..', '..', 'resources', 'light', 'dependency.svg'),
-		dark: path.join(__filename, '..', '..', 'resources', 'dark', 'dependency.svg')
+		light: path.join(__filename, '..', '..', 'resources', 'light', 'Node.svg'),
+		dark: path.join(__filename, '..', '..', 'resources', 'dark', 'Node.svg')
 	};
 
-	contextValue = 'dependency';
-
+	contextValue = 'Node';
 }
