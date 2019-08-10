@@ -115,9 +115,11 @@ class DeclarationsProvider implements vscode.TreeDataProvider<Node> {
 
 //  Called when VSCode is activated
 export function activate(context: vscode.ExtensionContext) {
-	//  Register the provider for the Tree View.
+	//  Create the Tree View.
 	const declarationsProvider = new DeclarationsProvider(vscode.workspace.rootPath || '');
-	vscode.window.registerTreeDataProvider('visualEmbeddedRustDeclarations', declarationsProvider);
+	const treeView = vscode.window.createTreeView('visualEmbeddedRustDeclarations', {
+		treeDataProvider: declarationsProvider
+	});
 
 	//  Register the commands.
 	vscode.commands.registerCommand('visualEmbeddedRustDeclarations.refreshEntry', 
