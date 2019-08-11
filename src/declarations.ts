@@ -5,7 +5,8 @@ import * as path from 'path';
 //  Tree of nodes
 let tree: any = {
 	"To Be Inferred": {
-		"start_sensor_listener"          : [ ["sensor", "_"], ["sensor_type", "_"], ["poll_time", "_"] ],
+		//"start_sensor_listener"          : [ ["sensor", "_"], ["sensor_type", "_"], ["poll_time", "_"] ],
+		"start_sensor_listener"          : { "sensor": "_", "sensor_type": "_", "poll_time": "_" },
 	},
 	"Mynewt API": {		
 		"sensor::set_poll_rate_ms"          : [ ["devname", "&Strn"],       ["poll_rate", "u32"] ],
@@ -72,7 +73,7 @@ function getChildren(pathkey: string): string[] {
 		return Object.keys(tree);
 	}
 	let treeElement = getTreeElement(pathkey);
-	if (treeElement) {
+	if (treeElement && typeof treeElement === 'object') {
 		//  Get the child keys.
 		const childKeys = Object.keys(treeElement);
 		console.log('getChildren: ' + pathkey + JSON.stringify(treeElement));
@@ -91,7 +92,7 @@ function getTreeElement(pathkey: string): any {
 	for (;;) {
 		let key = pathSplit.shift();
 		if (key === undefined) { return null; }
-		console.log('getTreeElement key=' + key + ', parent=' + JSON.stringify(parent));
+		//  console.log('getTreeElement key=' + key + ', parent=' + JSON.stringify(parent));
 		parent = parent[key];
 		if (parent === undefined) { return null; }
 		if (pathSplit.length === 0) { return parent; }
@@ -107,7 +108,7 @@ function getNode(pathkey: string): Node {
 		let prefix = '';
         const treeElement = getTreeElement(pathkey);
         const collapsibleState = 
-            treeElement && Object.keys(treeElement).length 
+            (treeElement && typeof treeElement === 'object' && Object.keys(treeElement).length)
                 ? vscode.TreeItemCollapsibleState.Collapsed 
 				: vscode.TreeItemCollapsibleState.None;				
         nodes[pathkey] = new Node(pathkey, key, prefix, collapsibleState);
