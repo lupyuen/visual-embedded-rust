@@ -7,11 +7,8 @@ import * as decorate from './decorate';
 //  List of log entries to replay
 let replayLog: string[] = [];
 
-//  Current editor
-//  let editor: vscode.TextEditor | undefined = undefined;
-
-//  Current timeout
-//  let timeout: NodeJS.Timer | undefined = undefined;
+//  List of interpolated spans to replay
+let interpolatedSpans: number[][] = [];
 
 //  Called when VSCode is activated
 export function activate(context: vscode.ExtensionContext) {
@@ -26,51 +23,32 @@ export function activate(context: vscode.ExtensionContext) {
         console.log('replay read log: ' + replayLog.length);    
     }
 
+    //  Trigger the replay when document is active.
 	let timeout: NodeJS.Timer | undefined = undefined;
 	let activeEditor = vscode.window.activeTextEditor;
-	if (activeEditor) {
-		triggerUpdateDecorations();
-	}
+    if (activeEditor) { triggerReplay(); }
+    
 	vscode.window.onDidChangeActiveTextEditor(editor => {
 		activeEditor = editor;
-		if (editor) {
-			triggerUpdateDecorations();
-		}
-	}, null, context.subscriptions);
+		if (editor) { triggerReplay(); }
+    }, null, context.subscriptions);
+    
 	vscode.workspace.onDidChangeTextDocument(event => {
-		if (activeEditor && event.document === activeEditor.document) {
-			triggerUpdateDecorations();
-		}
-	}, null, context.subscriptions);
-	function triggerUpdateDecorations() {
+		if (activeEditor && event.document === activeEditor.document) { triggerReplay(); }
+    }, null, context.subscriptions);
+    
+	function triggerReplay() {
 		if (timeout) {
             clearInterval(timeout);
 			timeout = undefined;
 		}
 		timeout = setInterval(() => {
-            if (activeEditor) {
-                replay(activeEditor);
-            }
-        }, 1 * 1000);
+            if (activeEditor) { replay(activeEditor); }
+        }, 100);
 	}
-
-    /*
-    //  Pause a while before replay, so user can switch to Rust editor.
-    if (timeout) {
-        clearTimeout(timeout);
-        timeout = undefined;
-    }
-    timeout = setTimeout(() => {
-        editor = vscode.window.activeTextEditor;
-        if (!editor) { 
-            console.log('replay no editor');
-            return; 
-        }    
-        replay();
-    }, 20 * 1000);
-    */
 }
 
+//  Remember the last span rendered
 let lastStartRow: number = 0;
 let lastStartCol: number = 0;
 let lastEndRow: number = 0;
@@ -79,8 +57,13 @@ let lastEndCol: number = 0;
 function replay(editor: vscode.TextEditor) {
     //  Replay one line of the log.
     if (!editor) { return; }
+    //  If there are interpolated spans, replay them.
+    if (interpolatedSpans.length > 0) {
+        replayInterpolatedSpan(editor);
+        return;
+    }
     for (;;) {
-        //  Look for lines starting with "#".
+        //  Look for replay lines starting with "#".
         if (replayLog.length === 0) { return; }
         const line = replayLog.shift();
         console.log('replay: ' + line);
@@ -88,34 +71,87 @@ function replay(editor: vscode.TextEditor) {
         console.log('replay1: ' + line);
 
         if (line.startsWith("#s")) {
-            //  Span: #s src/main.rs | 43 | 8 | 43 | 51
-            const s = line.split('|');
-            const startRow = parseInt(s[1]) - 1;
-            const startCol = parseInt(s[2]); 
-            const endRow = parseInt(s[3]) - 1; 
-            const endCol = parseInt(s[4]);
+            //  Replay Span: #s src/main.rs | 43 | 8 | 43 | 51
+            const replayed = replaySpan(editor, line);
+            if (!replayed) { continue; }  //  Not replayed because of duplicate, fetch next line.
 
-            //  If unchanged, fetch next line.
-            if (startRow === lastStartRow
-                && startCol === lastStartCol
-                && endRow === lastEndRow
-                && endCol === lastEndCol) {
-                continue;
-            }
-
-            //  Decorate the span.
-            decorate.decorate(editor, startRow, startCol, endRow, endCol);
-            lastStartRow = startRow;
-            lastStartCol = startCol;
-            lastEndRow = endRow;
-            lastEndCol = endCol;
         } else if (line.startsWith("#m")) {
-            //  Match: #m sensor::set_poll_rate_ms | src/main.rs | 43 | 8 | 43 | 51
+            //  Replay Match: #m sensor::set_poll_rate_ms | src/main.rs | 43 | 8 | 43 | 51
 
         } else if (line.startsWith("#i")) {
-            //  Infer: #i start_sensor_listener | sensor | sensor::set_poll_rate_ms | devname | &Strn
+            //  Replay Infer: #i start_sensor_listener | sensor | sensor::set_poll_rate_ms | devname | &Strn
 
         } else { continue; }
         break;
     }
+}
+
+function replaySpan(editor: vscode.TextEditor, line: string): boolean {
+    //  Replay Span: #s src/main.rs | 43 | 8 | 43 | 51
+    //  Return true if span has been replayed.
+    if (!editor) { return false; }
+    const s = line.split('|');
+    const startRow = parseInt(s[1]) - 1;
+    const startCol = parseInt(s[2]); 
+    const endRow = parseInt(s[3]) - 1; 
+    const endCol = parseInt(s[4]);
+    //  If span is unchanged, fetch next line.
+    if (startRow === lastStartRow
+        && startCol === lastStartCol
+        && endRow === lastEndRow
+        && endCol === lastEndCol) {
+        return false;
+    }
+    //  Interpolate the span into 3 intermediate spans.
+    interpolatedSpans = interpolateSpan(
+        lastStartRow, startRow,
+        lastStartCol, startCol,
+        lastEndRow, endRow,
+        lastEndCol, endCol
+    );
+    //  Remember the last span.
+    lastStartRow = startRow;
+    lastStartCol = startCol;
+    lastEndRow = endRow;
+    lastEndCol = endCol;
+    //  Decorate the span.
+    //  Previously: decorate.decorate(editor, startRow, startCol, endRow, endCol);
+    replayInterpolatedSpan(editor);
+    return true;
+}
+
+function replayInterpolatedSpan(editor: vscode.TextEditor) {
+    //  Replay the next interpolated span.
+    if (!editor) { return; }
+    if (interpolatedSpans.length === 0) { return; }
+    const span = interpolatedSpans.shift();
+    if (span === undefined) { return; }
+    decorate.decorate(editor, span[0], span[1], span[2], span[3]);
+}
+
+function interpolateSpan(
+    startRow1: number, startRow2: number,
+    startCol1: number, startCol2: number,
+    endRow1: number, endRow2: number,
+    endCol1: number, endCol2: number
+) {
+    //  Interpolate the span into 5 frames.
+    const frames = 5;
+    let result: number[][] = [];
+    let incStartRow = (startRow2 - startRow1) / (frames * 1.0);
+    let incStartCol = (startCol2 - startCol1) / (frames * 1.0);
+    let incEndRow = (endRow2 - endRow1) / (frames * 1.0);
+    let incEndCol = (endCol2 - endCol1) / (frames * 1.0);
+    //  Interpolate (n - 1) frames.
+    for (let i = 1; i < frames; i++) {
+        result.push([
+            startRow1 + Math.floor(i * incStartRow),
+            startCol1 + Math.floor(i * incStartCol),
+            endRow1 + Math.floor(i * incEndRow),
+            endCol1 + Math.floor(i * incEndCol)
+        ]);
+    }
+    //  Push the last frame.
+    result.push([startRow2, startCol2, endRow2, endCol2]);
+    return result;
 }
