@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as decorate from './decorate';
+import * as declarations from './declarations';
 
 //  List of log entries to replay
 let replayLog: string[] = [];
@@ -44,7 +45,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 		timeout = setInterval(() => {
             if (activeEditor) { replay(activeEditor); }
-        }, 100);
+        }, 200);
 	}
 }
 
@@ -80,7 +81,10 @@ function replay(editor: vscode.TextEditor) {
 
         } else if (line.startsWith("#i")) {
             //  Replay Infer: #i start_sensor_listener | sensor | sensor::set_poll_rate_ms | devname | &Strn
-
+            const s = line.substr(2).split('|');
+            //  declarations.setPending([s[0].trim(), s[1].trim()].join('|'), s[4].trim());
+            //  declarations.markPending([s[0].trim(), s[1].trim()].join('|'));
+            declarations.markKnown([s[2].trim(), s[3].trim()].join('|'));
         } else { continue; }
         break;
     }

@@ -16,8 +16,24 @@ let tree: any = {
 	},
 };
 
-const pending_tree 	= tree[Object.keys(tree)[0]];
-const known_tree 	= tree[Object.keys(tree)[1]];
+const pendingKey 	= Object.keys(tree)[0];
+const knownKey 		= Object.keys(tree)[1];
+let pendingNode: Node | undefined = undefined;
+let knownNode: 	 Node | undefined = undefined;
+
+export function markKnown(pathkey: string) {
+	//  Mark this known node.
+	const node = getNode([knownKey, pathkey].join('|'));
+	if (!node) { return; }
+
+	//  Unmark the previous known node.
+	if (knownNode) { knownNode.prefix = ''; }
+	knownNode = node;
+
+	//  Mark the known node and refresh the display.
+	node.prefix = '▶️ ';
+	if (provider) { provider.refresh(); }
+}
 
 //  List of nodes indexed by path e.g. `Mynewt API|sensor::set_poll_rate_ms|devname`
 let nodes: {[path: string]: Node} = {};
@@ -140,17 +156,20 @@ class DeclarationsProvider implements vscode.TreeDataProvider<Node> {
     constructor(private workspaceRoot: string) {}
 }
 
+let provider: DeclarationsProvider | undefined = undefined;
+let treeView: vscode.TreeView<Node> | undefined = undefined;
+
 //  Called when VSCode is activated
 export function activate(context: vscode.ExtensionContext) {
 	//  Create the Tree View.
-	const provider = new DeclarationsProvider(vscode.workspace.rootPath || '');
-	const treeView = vscode.window.createTreeView('visualEmbeddedRustDeclarations', {
+	provider = new DeclarationsProvider(vscode.workspace.rootPath || '');
+	treeView = vscode.window.createTreeView('visualEmbeddedRustDeclarations', {
 		treeDataProvider: provider
 	});
 
 	//  Register the commands.
 	vscode.commands.registerCommand('visualEmbeddedRustDeclarations.refreshEntry', 
-		() => provider.refresh());
+		() => provider ? provider.refresh() : null);
 
 	vscode.commands.registerCommand('extension.openPackageOnNpm', 
 		moduleName => vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(`https://www.npmjs.com/package/${moduleName}`)));
