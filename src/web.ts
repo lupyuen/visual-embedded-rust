@@ -454,10 +454,11 @@ export function getHtml(para: any) {
         </block>
     </category>
 
-    <!--  Begin: Control Category -->
-    <category name="Control" colour="160">
-        <block type="wait"></block>
+    <!--  Begin: CoAP Category -->
+    <category name="CoAP" colour="160">
         <block type="coap"></block>
+        <block type="field"></block>
+        <block type="wait"></block>
     </category>
     <!--  End  -->
 
