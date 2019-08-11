@@ -22,14 +22,20 @@ let pendingNode: Node | undefined = undefined;
 let knownNode: 	 Node | undefined = undefined;
 
 export function setPendingValue(pathkey: string, value: any) {
-	//  Set the value of this pending node.
+	//  Set the value of this pending node.  Return true if successfully set.
 	const pathSplit = pathkey.split('|');
 	const parentPath = pathSplit.slice(0, -1).join('|');
 	const key = pathSplit[pathSplit.length - 1];
 	const parentTree = getTreeElement([pendingKey, parentPath].join('|'));
-	if (!parentTree) { return; }
+	//  console.log('setPendingValue: ' + pathkey + ' / ' + JSON.stringify(parentTree));
+	if (!parentTree || parentTree[key] === undefined) { return false; }
 	parentTree[key] = value;
+
+	const node = getNode([pendingKey, pathkey].join('|'));
+	if (node) { node.value = value; }
+
 	if (provider) { provider.refresh(); }
+	return true;
 }
 
 export function markPending(pathkey: string) {
@@ -38,7 +44,7 @@ export function markPending(pathkey: string) {
 	if (!node) { return; }
 
 	//  Unmark the previous pending node.
-	if (pendingNode) { pendingNode.prefix = ''; }
+	if (pendingNode) { pendingNode.prefix = '✅ '; }
 	pendingNode = node;
 
 	//  Mark the known node and refresh the display.

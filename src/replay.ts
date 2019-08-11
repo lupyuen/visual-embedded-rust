@@ -70,9 +70,8 @@ function replay(editor: vscode.TextEditor) {
         //  Look for replay lines starting with "#".
         if (replayLog.length === 0) { return; }
         const line = replayLog.shift();
-        console.log('replay: ' + line);
         if (line === undefined || !line.startsWith('#')) { continue; }
-        console.log('replay1: ' + line);
+        console.log('replay: ' + line);
 
         if (line.startsWith("#s")) {
             //  Replay Span: #s src/main.rs | 43 | 8 | 43 | 51
@@ -93,15 +92,27 @@ function replay(editor: vscode.TextEditor) {
             //  Replay Infer: #i start_sensor_listener | sensor | sensor::set_poll_rate_ms | devname | &Strn
             //  Mark the pending and known declarations.
             const s = line.substr(2).split('|');
-            //  declarations.setPending([s[0].trim(), s[1].trim()].join('|'), s[4].trim());
-            //  declarations.markPending([s[0].trim(), s[1].trim()].join('|'));
-            declarations.markKnown([s[2].trim(), s[3].trim()].join('|'));            
+            const pendingPath = [s[0].trim(), s[1].trim()].join('|');
+            const knownPath   = [s[2].trim(), s[3].trim()].join('|');
+            const para = s[1].trim();
+            const value = s[4].trim();
+            const result = declarations.setPendingValue(
+                pendingPath, 
+                value
+            );
+            if (result) { vscode.window.showInformationMessage(`"${para}" was inferred as "${value}"`); }
+            declarations.markPending(
+                pendingPath
+            );
+            declarations.markKnown(
+                knownPath
+            );            
             //  Show the span as green.
             const span = [
                 '',
-                lastStartRow,
+                lastStartRow + 1,
                 lastStartCol,
-                lastEndRow,
+                lastEndRow + 1,
                 lastEndCol
             ].join('|');
             const replayed = replaySpan(editor, span, 1);
