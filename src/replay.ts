@@ -45,7 +45,12 @@ export function activate(context: vscode.ExtensionContext) {
 		if (timeout) {
             clearInterval(timeout);
 			timeout = undefined;
-		}
+        }
+        //  Don't replay for generated Rust code.
+        if (activeEditor && activeEditor.document.getText().indexOf('BEGIN BLOCKS') >= 0) { 
+            console.log('Skipping replay for document with BEGIN BLOCKS');
+            return; 
+        }
 		timeout = setInterval(() => {
             if (activeEditor) { replay(activeEditor); }
         }, 200);

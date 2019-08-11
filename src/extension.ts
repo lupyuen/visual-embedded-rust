@@ -86,8 +86,8 @@ class CatCodingPanel {
 
 	public static createOrShow(extensionPath: string) {
 		console.log('createOrShow');
-		const column = vscode.window.activeTextEditor
-			? vscode.window.activeTextEditor.viewColumn
+		const column = (vscode.window.activeTextEditor && vscode.window.activeTextEditor.viewColumn)
+			? (vscode.window.activeTextEditor.viewColumn + 1)
 			: undefined;
 
 		// If we already have a panel, show it.
