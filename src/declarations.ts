@@ -9,16 +9,11 @@ let tree: any = {
 		"start_sensor_listener"          : { "sensor": "_", "sensor_type": "_", "poll_time": "_" },
 	},
 	"Mynewt API": {		
-		"sensor::set_poll_rate_ms"          : [ ["devname", "&Strn"],       ["poll_rate", "u32"] ],
-		"sensor::mgr_find_next_bydevname"   : [ ["devname", "&Strn"],       ["prev_cursor", "*mut sensor"] ],
-		"sensor::register_listener"         : [ ["sensor", "*mut sensor"],  ["listener", "sensor_listener"] ],
-		"new_sensor_listener"               : [ ["sl_sensor_type", "sensor_type_t"],     ["sl_func", "sensor_data_func"] ]	
+		"sensor::set_poll_rate_ms"          : { "devname": "&Strn",       "poll_rate": "u32" },
+		"sensor::mgr_find_next_bydevname"   : { "devname": "&Strn",       "prev_cursor": "*mut sensor" },
+		"sensor::register_listener"         : { "sensor": "*mut sensor",  "listener": "sensor_listener" },
+		"new_sensor_listener"               : { "sl_sensor_type": "sensor_type_t",     "sl_func": "sensor_data_func" }	
 	},
-	a: {
-		b: {
-			c: 1
-		}
-	}
 };
 
 const pending_tree 	= tree[Object.keys(tree)[0]];
@@ -31,18 +26,20 @@ let nodes: {[path: string]: Node} = {};
 class Node extends vscode.TreeItem {
 	constructor(
         public readonly pathkey: string,
-        public readonly key: string,
+		public readonly key: string,
+		public value: any,
 		public prefix: string,
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
 		public readonly command?: vscode.Command
 	) {
-		super(`${prefix}${key}`, collapsibleState);
+		super(`${prefix}${key}${(value === undefined) ? '' : (': ' + value)}`, collapsibleState);
 	}
 
 	set label(_: string) {}
 
 	get label(): string {
-		return `${this.prefix}${this.key}`;
+		const { key, value, prefix } = this;
+		return `${prefix}${key}${(value === undefined) ? '' : (': ' + value)}`;
 	}
 
 	get tooltip(): string {
@@ -76,7 +73,7 @@ function getChildren(pathkey: string): string[] {
 	if (treeElement && typeof treeElement === 'object') {
 		//  Get the child keys.
 		const childKeys = Object.keys(treeElement);
-		console.log('getChildren: ' + pathkey + JSON.stringify(treeElement));
+		//  console.log('getChildren: ' + pathkey + JSON.stringify(treeElement));
 		//  Append the child keys to the parent path.
 		return childKeys.map(key => pathkey + '|' + key);
 	}
@@ -106,12 +103,15 @@ function getNode(pathkey: string): Node {
 		let pathSplit = pathkey.split('|');
 		let key = pathSplit[pathSplit.length - 1];
 		let prefix = '';
-        const treeElement = getTreeElement(pathkey);
+		const treeElement = getTreeElement(pathkey);
+		//  If this is a key/value, get the value.
+		let value: any = undefined;
+		if (treeElement && typeof treeElement !== 'object') { value = treeElement; }
         const collapsibleState = 
             (treeElement && typeof treeElement === 'object' && Object.keys(treeElement).length)
                 ? vscode.TreeItemCollapsibleState.Collapsed 
 				: vscode.TreeItemCollapsibleState.None;				
-        nodes[pathkey] = new Node(pathkey, key, prefix, collapsibleState);
+        nodes[pathkey] = new Node(pathkey, key, value, prefix, collapsibleState);
 	}
 	return nodes[pathkey];
 }
