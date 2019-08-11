@@ -173,14 +173,14 @@ function initStorage(vscode) {  //  Pass in vscode so that we don't expose vscod
     console.log('monitorChanges_');
     var startXmlDom = Blockly.Xml.workspaceToDom(workspace);
     var startXmlText = Blockly.Xml.domToText(startXmlDom);
-    function change() {
+
+    function generateCode() {
+      //  Generate the Rust code and send to VSCode.
+      console.log('monitorChanges_generateCode');
       var xmlDom = Blockly.Xml.workspaceToDom(workspace);
       var xmlText = Blockly.Xml.domToText(xmlDom);
-      if (startXmlText == xmlText) { return; }  //  No changes.
-      startXmlText = xmlText;
-      console.log('monitorChanges_change');
 
-      //  Generate the Rust code. Combine with the XML, enclosed by `BEGIN BLOCKS`...`END BLOCKS` tags.
+      //  Combine the code with the XML, enclosed by `BEGIN BLOCKS`...`END BLOCKS` tags.
       var code = Blockly.Rust.workspaceToCode(workspace);
       var text = composeDoc(xmlText, code);
 
@@ -190,7 +190,24 @@ function initStorage(vscode) {  //  Pass in vscode so that we don't expose vscod
         text: text
       });  
     }
+
+    function change() {
+      //  Callback for changes.  Detect whether the Blocks XML has changed.  If changed, regenerate the code.
+      var xmlDom = Blockly.Xml.workspaceToDom(workspace);
+      var xmlText = Blockly.Xml.domToText(xmlDom);
+      if (startXmlText == xmlText) { return; }  //  No changes.
+
+      //  Generate the code.
+      startXmlText = xmlText;
+      console.log('monitorChanges_change');
+      generateCode();
+    }
+
+    //  Start monitoring for changes.
     workspace.addChangeListener(change);
+
+    //  On first load, regenerate the Rust code in case the code generator has been updated.
+    generateCode();
   };
 
   /**

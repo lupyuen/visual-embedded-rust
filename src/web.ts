@@ -52,8 +52,9 @@ export function getHtml(para: any) {
 
     <!--  Load Mynewt Blocks  -->
     <script nonce="${para.nonce}" src="${para.blocklyUri}/generators/rust/mynewt_blocks.js"></script>
+    <script nonce="${para.nonce}" src="${para.blocklyUri}/generators/rust/mynewt_coap.js"></script>
 
-    <!--  Load Mynewt Functions  -->
+    <!--  Load Mynewt Block Code Generators  -->
     <script nonce="${para.nonce}" src="${para.blocklyUri}/generators/rust/mynewt_functions.js"></script>
 
     <!--  Load Rust Functions. TODO: Package into rust_compressed.js  -->
@@ -456,6 +457,7 @@ export function getHtml(para: any) {
     <!--  Begin: Control Category -->
     <category name="Control" colour="160">
         <block type="wait"></block>
+        <block type="coap"></block>
     </category>
     <!--  End  -->
 
