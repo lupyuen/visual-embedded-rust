@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 
+/*
 // create a decorator type that we use to decorate small numbers
 const smallNumberDecorationType = vscode.window.createTextEditorDecorationType({
 	borderWidth: '1px',
@@ -22,22 +23,36 @@ const largeNumberDecorationType = vscode.window.createTextEditorDecorationType({
 	// use a themable color. See package.json for the declaration and default values.
 	backgroundColor: { id: 'visualEmbeddedRust.largeNumberBackground' }
 });
+*/
 
-export function decorate(editor: vscode.TextEditor, startLine: number, startCol: number, endLine: number, endCol: number) {
+// create a decorator type using a themable color. See package.json for the declaration and default values.
+const decorationTypes = [
+	vscode.window.createTextEditorDecorationType({
+		cursor: 'crosshair',
+		backgroundColor: { id: 'visualEmbeddedRust.background0' }
+	}),
+	vscode.window.createTextEditorDecorationType({
+		cursor: 'crosshair',
+		backgroundColor: { id: 'visualEmbeddedRust.background1' }
+	}),
+];
+
+export function decorate(editor: vscode.TextEditor, color: number, startLine: number, startCol: number, endLine: number, endCol: number) {
 	//  Apply decoration to the active editor.  All numbers are zero-based.
 	if (!editor) { return; }
-	const smallNumbers: vscode.DecorationOptions[] = [];
-	const largeNumbers: vscode.DecorationOptions[] = [];
-
+	const decorationOptions: vscode.DecorationOptions[][] = [
+		[], []
+	];
 	const startPos = new vscode.Position(startLine, startCol);
 	const endPos = new vscode.Position(endLine, endCol);
 	const decoration = { 
 		range: new vscode.Range(startPos, endPos), 
 		hoverMessage: '' 
 	};
-	largeNumbers.push(decoration);
-	editor.setDecorations(smallNumberDecorationType, smallNumbers);
-	editor.setDecorations(largeNumberDecorationType, largeNumbers);
+	decorationOptions[color].push(decoration);
+	for (let i = 0; i < decorationTypes.length; i++) {
+		editor.setDecorations(decorationTypes[i], decorationOptions[i]);
+	}
 }
 
 // Called when vs code is activated

@@ -62,12 +62,21 @@
 		},
 		"colors": [
 			{
-				"id": "visualEmbeddedRust.largeNumberBackground",
-				"description": "Background decoration color for large numbers",
+				"id": "visualEmbeddedRust.background0",
+				"description": "Background #0",
 				"defaults": {
 					"dark": "#FF000055",
 					"light": "#FF000055",
 					"highContrast": "#FF000055"
+				}
+			},
+			{
+				"id": "visualEmbeddedRust.background1",
+				"description": "Background #1",
+				"defaults": {
+					"dark": "#00FF0055",
+					"light": "#00FF0055",
+					"highContrast": "#00FF0055"
 				}
 			}
 		]		

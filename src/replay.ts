@@ -11,6 +11,9 @@ let replayLog: string[] = [];
 //  List of interpolated spans to replay
 let interpolatedSpans: number[][] = [];
 
+//  Span color: 0 for red, 1 for green
+let spanColor: number = 0;
+
 //  Called when VSCode is activated
 export function activate(context: vscode.ExtensionContext) {
     console.log('replay is activated');
@@ -73,24 +76,42 @@ function replay(editor: vscode.TextEditor) {
 
         if (line.startsWith("#s")) {
             //  Replay Span: #s src/main.rs | 43 | 8 | 43 | 51
-            const replayed = replaySpan(editor, line);
+            //  Show the span as red.
+            const replayed = replaySpan(editor, line, 0);
             if (!replayed) { continue; }  //  Not replayed because of duplicate, fetch next line.
 
         } else if (line.startsWith("#m")) {
             //  Replay Match: #m sensor::set_poll_rate_ms | src/main.rs | 43 | 8 | 43 | 51
+            //  Mark the known declaration.
+            const s = line.substr(2).split('|');
+            declarations.markKnown(s[2].trim());
+            //  Show the span as green.
+            const span = s.slice(1).join('|');
+            const replayed = replaySpan(editor, span, 1);
 
         } else if (line.startsWith("#i")) {
             //  Replay Infer: #i start_sensor_listener | sensor | sensor::set_poll_rate_ms | devname | &Strn
+            //  Mark the pending and known declarations.
             const s = line.substr(2).split('|');
             //  declarations.setPending([s[0].trim(), s[1].trim()].join('|'), s[4].trim());
             //  declarations.markPending([s[0].trim(), s[1].trim()].join('|'));
-            declarations.markKnown([s[2].trim(), s[3].trim()].join('|'));
+            declarations.markKnown([s[2].trim(), s[3].trim()].join('|'));            
+            //  Show the span as green.
+            const span = [
+                '',
+                lastStartRow,
+                lastStartCol,
+                lastEndRow,
+                lastEndCol
+            ].join('|');
+            const replayed = replaySpan(editor, span, 1);
+
         } else { continue; }
         break;
     }
 }
 
-function replaySpan(editor: vscode.TextEditor, line: string): boolean {
+function replaySpan(editor: vscode.TextEditor, line: string, color: number): boolean {
     //  Replay Span: #s src/main.rs | 43 | 8 | 43 | 51
     //  Return true if span has been replayed.
     if (!editor) { return false; }
@@ -103,7 +124,8 @@ function replaySpan(editor: vscode.TextEditor, line: string): boolean {
     if (startRow === lastStartRow
         && startCol === lastStartCol
         && endRow === lastEndRow
-        && endCol === lastEndCol) {
+        && endCol === lastEndCol
+        && spanColor === color) {
         return false;
     }
     //  Interpolate the span into 3 intermediate spans.
@@ -118,6 +140,7 @@ function replaySpan(editor: vscode.TextEditor, line: string): boolean {
     lastStartCol = startCol;
     lastEndRow = endRow;
     lastEndCol = endCol;
+    spanColor = color;
     //  Decorate the span.
     //  Previously: decorate.decorate(editor, startRow, startCol, endRow, endCol);
     replayInterpolatedSpan(editor);
@@ -130,7 +153,7 @@ function replayInterpolatedSpan(editor: vscode.TextEditor) {
     if (interpolatedSpans.length === 0) { return; }
     const span = interpolatedSpans.shift();
     if (span === undefined) { return; }
-    decorate.decorate(editor, span[0], span[1], span[2], span[3]);
+    decorate.decorate(editor, spanColor, span[0], span[1], span[2], span[3]);
 }
 
 function interpolateSpan(

@@ -21,6 +21,31 @@ const knownKey 		= Object.keys(tree)[1];
 let pendingNode: Node | undefined = undefined;
 let knownNode: 	 Node | undefined = undefined;
 
+export function setPendingValue(pathkey: string, value: any) {
+	//  Set the value of this pending node.
+	const pathSplit = pathkey.split('|');
+	const parentPath = pathSplit.slice(0, -1).join('|');
+	const key = pathSplit[pathSplit.length - 1];
+	const parentTree = getTreeElement([pendingKey, parentPath].join('|'));
+	if (!parentTree) { return; }
+	parentTree[key] = value;
+	if (provider) { provider.refresh(); }
+}
+
+export function markPending(pathkey: string) {
+	//  Mark this pending node.
+	const node = getNode([pendingKey, pathkey].join('|'));
+	if (!node) { return; }
+
+	//  Unmark the previous pending node.
+	if (pendingNode) { pendingNode.prefix = ''; }
+	pendingNode = node;
+
+	//  Mark the known node and refresh the display.
+	node.prefix = '▶️ ';
+	if (provider) { provider.refresh(); }
+}
+
 export function markKnown(pathkey: string) {
 	//  Mark this known node.
 	const node = getNode([knownKey, pathkey].join('|'));
