@@ -4,89 +4,115 @@ import * as path from 'path';
 
 //  Tree of nodes
 let tree: any = {
-	'a': {
-		'aa': {
-			'aaa': {
-				'aaaa': {
-					'aaaaa': {
-						'aaaaaa': {
-
-						}
-					}
-				}
-			}
-		},
-		'ab': {}
+	"To Be Inferred": {
+		"start_sensor_listener"          : [ ["sensor", "_"], ["sensor_type", "_"], ["poll_time", "_"] ],
 	},
-	'b': {
-		'ba': {},
-		'bb': {}
+	"Mynewt API": {		
+		"sensor::set_poll_rate_ms"          : [ ["devname", "&Strn"],       ["poll_rate", "u32"] ],
+		"sensor::mgr_find_next_bydevname"   : [ ["devname", "&Strn"],       ["prev_cursor", "*mut sensor"] ],
+		"sensor::register_listener"         : [ ["sensor", "*mut sensor"],  ["listener", "sensor_listener"] ],
+		"new_sensor_listener"               : [ ["sl_sensor_type", "sensor_type_t"],     ["sl_func", "sensor_data_func"] ]	
+	},
+	a: {
+		b: {
+			c: 1
+		}
 	}
 };
 
-//  List of nodes indexed by name
-let nodes: {[name: string]: Node} = {};
+const pending_tree 	= tree[Object.keys(tree)[0]];
+const known_tree 	= tree[Object.keys(tree)[1]];
 
-//  Each node of the tree
+//  List of nodes indexed by path e.g. `Mynewt API|sensor::set_poll_rate_ms|devname`
+let nodes: {[path: string]: Node} = {};
+
+//  Each node of the tree. `key` looks like `
 class Node extends vscode.TreeItem {
 	constructor(
+        public readonly pathkey: string,
         public readonly key: string,
-		public readonly label: string,
-		private version: string,
+		public prefix: string,
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
 		public readonly command?: vscode.Command
 	) {
-		super(label, collapsibleState);
+		super(`${prefix}${key}`, collapsibleState);
+	}
+
+	set label(_: string) {}
+
+	get label(): string {
+		return `${this.prefix}${this.key}`;
 	}
 
 	get tooltip(): string {
-		return `${this.label}-${this.version}`;
+		return `${this.prefix}${this.key}`;
 	}
 
 	get description(): string {
-		return this.version;
+		return '';
+	}
+
+	get icon(): string {
+		return (this.collapsibleState === vscode.TreeItemCollapsibleState.None)
+			? 'string.svg'   //  Icon for no children
+			: 'folder.svg';  //  Icon for children
 	}
 
 	iconPath = {
-		light: 	path.join(__filename, '..', '..', 'resources', 'light', 'folder.svg'),
-		dark: 	path.join(__filename, '..', '..', 'resources', 'dark',  'folder.svg')
+		light: 	path.join(__filename, '..', '..', 'resources', 'light', this.icon),
+		dark: 	path.join(__filename, '..', '..', 'resources', 'dark',  this.icon)
 	};
 
 	contextValue = 'Node';
 }
 
-function getChildren(key: string): string[] {
-	if (!key) {
+function getChildren(pathkey: string): string[] {
+	//  Return the paths of the child nodes.
+	if (!pathkey) {
 		return Object.keys(tree);
 	}
-	let treeElement = getTreeElement(key);
+	let treeElement = getTreeElement(pathkey);
 	if (treeElement) {
-		return Object.keys(treeElement);
+		//  Get the child keys.
+		const childKeys = Object.keys(treeElement);
+		console.log('getChildren: ' + pathkey + JSON.stringify(treeElement));
+		//  Append the child keys to the parent path.
+		return childKeys.map(key => pathkey + '|' + key);
 	}
 	return [];
 }
 
-function getTreeElement(key: string): any {
+function getTreeElement(pathkey: string): any {
+	//  Return the subtree for the path e.g. `Mynewt API|sensor::set_poll_rate_ms|devname`
+	//  console.log('getTreeElement ' + pathkey);
 	let parent = tree;
-	for (let i = 0; i < key.length; i++) {
-		parent = parent[key.substring(0, i + 1)];
-		if (!parent) {
-			return null;
-		}
+	//  Split by `|` and walk the tree.
+	let pathSplit = pathkey.split('|');
+	for (;;) {
+		let key = pathSplit.shift();
+		if (key === undefined) { return null; }
+		console.log('getTreeElement key=' + key + ', parent=' + JSON.stringify(parent));
+		parent = parent[key];
+		if (parent === undefined) { return null; }
+		if (pathSplit.length === 0) { return parent; }
 	}
-	return parent;
+	return null;
 }
 
-function getNode(key: string): Node {
-	if (!nodes[key]) {
-        const treeElement = getTreeElement(key);
+function getNode(pathkey: string): Node {
+	if (!nodes[pathkey]) {
+		//  Key is the last part of the path.
+		let pathSplit = pathkey.split('|');
+		let key = pathSplit[pathSplit.length - 1];
+		let prefix = '';
+        const treeElement = getTreeElement(pathkey);
         const collapsibleState = 
             treeElement && Object.keys(treeElement).length 
                 ? vscode.TreeItemCollapsibleState.Collapsed 
-                : vscode.TreeItemCollapsibleState.None;
-        nodes[key] = new Node(key, key, "1", collapsibleState);
+				: vscode.TreeItemCollapsibleState.None;				
+        nodes[pathkey] = new Node(pathkey, key, prefix, collapsibleState);
 	}
-	return nodes[key];
+	return nodes[pathkey];
 }
 
 class DeclarationsProvider implements vscode.TreeDataProvider<Node> {
@@ -95,14 +121,14 @@ class DeclarationsProvider implements vscode.TreeDataProvider<Node> {
 	readonly onDidChangeTreeData: vscode.Event<Node | undefined> = this._onDidChangeTreeData.event;
 
     getChildren(element?: Node): Thenable<Node[]> {
-        const children = getChildren(element ? element.key : "")
+        const children = getChildren(element ? element.pathkey : "")
             .map(key => getNode(key));
         return Promise.resolve(children);
     }
 
     getTreeItem(element: Node): vscode.TreeItem {
-        const treeItem = getNode(element.key);
-        treeItem.id = element.key;
+        const treeItem = getNode(element.pathkey);
+        treeItem.id = element.pathkey;
         return treeItem;
     }
 
