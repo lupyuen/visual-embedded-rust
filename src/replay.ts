@@ -18,15 +18,6 @@ let spanColor: number = 0;
 export function activate(context: vscode.ExtensionContext) {
     console.log('replay is activated');
     
-    //  Read the entire replay log and break into lines.
-    if (replayLog.length === 0) {
-        const replayPath = path.join(__filename, '..', '..', 'resources', 'replay.log');
-        const buf = fs.readFileSync(replayPath);
-        const log = buf.toString();
-        replayLog = log.split('\n');
-        console.log('replay read log: ' + replayLog.length);    
-    }
-
     //  Trigger the replay when document is active.
 	let timeout: NodeJS.Timer | undefined = undefined;
 	let activeEditor = vscode.window.activeTextEditor;
@@ -46,10 +37,23 @@ export function activate(context: vscode.ExtensionContext) {
             clearInterval(timeout);
 			timeout = undefined;
         }
+        //  Don't replay for empty Rust file.
+        if (activeEditor && activeEditor.document.getText().length === 0) { 
+            console.log('Skipping replay for empty document');
+            return; 
+        }
         //  Don't replay for generated Rust code.
         if (activeEditor && activeEditor.document.getText().indexOf('BEGIN BLOCKS') >= 0) { 
             console.log('Skipping replay for document with BEGIN BLOCKS');
             return; 
+        }
+        //  Read the entire replay log and break into lines.
+        if (replayLog.length === 0) {
+            const replayPath = path.join(__filename, '..', '..', 'resources', 'replay.log');
+            const buf = fs.readFileSync(replayPath);
+            const log = buf.toString();
+            replayLog = log.split('\n');
+            console.log('replay read log: ' + replayLog.length);    
         }
 		timeout = setInterval(() => {
             if (activeEditor) { replay(activeEditor); }
