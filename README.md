@@ -10,19 +10,19 @@ Read the articles:
 
 ## Features
 
-1. In the Visual Studio Code Explorer, create a new Rust source file like `main.rs`
+1. In the Visual Studio Code Explorer, create a new empty Rust source file like `main.rs`
 
 1. Edit the Rust file
 
-1. Click `Visual editor` at the top right of the editor
+1. Click `Visual Editor` at the top right of the editor
 
 1. When prompted to populate the visual program, click `OK`
 
-\!\[Visual Embedded Rust editor with generated Rust code\]\(images/editor.png\)
+![Visual Embedded Rust editor with generated Rust code](images/editor.png)
 
 ## Inside The Extension
 
-The source code is located at `https://github.com/lupyuen/visual-embedded-rust`
+The source code is located at [`github.com/lupyuen/visual-embedded-rust`](https://github.com/lupyuen/visual-embedded-rust)
 
 1. Main logic for the VSCode Extension is in [`extension.ts`](src/extension.ts)
 
@@ -35,6 +35,8 @@ The source code is located at `https://github.com/lupyuen/visual-embedded-rust`
 1. The Rust code generator for Blockly is here: [blockly-mynewt-rust](https://github.com/lupyuen/blockly-mynewt-rust/tree/master/generators/rust)
 
 1. [Demo Rust source file is here](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/rust/visual/src/lib.rs)
+
+The extension is [published here](https://marketplace.visualstudio.com/items?itemName=LeeLupYuen.visual-embedded-rust)
 
 ## Building The Extension
 
