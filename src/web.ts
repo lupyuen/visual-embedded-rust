@@ -76,13 +76,14 @@ export function getHtml(para: any) {
     <table width="100%" height="100%">
     <tr>
         <td>
-        <h1><a href="https://developers.google.com/blockly/">Blockly</a>&rlm; &gt;
-            <a href="../index.html">Demos</a>&rlm; &gt;
+        <h1 style="display: none">
+            <!--  TODO: Show Rust filename  -->
             <span id="title">...</span>
         </h1>
         </td>
         <td class="farSide">
-        <select id="languageMenu"></select>
+        <!--  Hide language menu  -->
+        <select style="display: none" id="languageMenu"></select>
         </td>
     </tr>
     <tr>
@@ -93,8 +94,8 @@ export function getHtml(para: any) {
             <td class="tabmin">&nbsp;</td>
             <td id="tab_rust" class="taboff">Rust</td>
             <td class="tabmin">&nbsp;</td>
-            <td id="tab_javascript" class="taboff">JavaScript</td>
-            <td class="tabmin">&nbsp;</td>
+            <td style="display: none" id="tab_javascript" class="taboff">JavaScript</td>
+            <td style="display: none" class="tabmin">&nbsp;</td>
             <td style="display: none" id="tab_python" class="taboff">Python</td>
             <td style="display: none" class="tabmin">&nbsp;</td>
             <td style="display: none" id="tab_php" class="taboff">PHP</td>

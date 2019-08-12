@@ -2,7 +2,7 @@
 	"name": "visual-embedded-rust",
 	"displayName": "Visual Embedded Rust",
 	"description": "Visual editor for Embedded Rust",
-	"version": "0.0.8",
+	"version": "0.0.9",
 	"publisher": "LeeLupYuen",
 	"repository": {
 		"url": "https://github.com/lupyuen/visual-embedded-rust"
