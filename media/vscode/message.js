@@ -79,10 +79,11 @@ window.addEventListener('message', event => {
 function composeDoc(xml, code) {
     //  Given the XML blocks and the generated Rust code, compose the document to be updated in VSCode.
     const doc = [
-        code,
-        '/*  ' + blocks_begin,
+        code + '\n',
+        '//  ',
+        blocks_begin,
         xml,
-        blocks_end + '  */',
-    ].join('\n');
+        blocks_end,
+    ].join('');
     return doc;
 }

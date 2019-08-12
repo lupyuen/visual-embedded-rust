@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "media/blockly-mynewt-rust"
+		},
+		{
+			"path": "/Users/Luppy/mynewt/stm32bluepill-mynewt-sensor"
 		}
 	],
 	"settings": {
