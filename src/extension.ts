@@ -3,6 +3,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import * as fs from 'fs';
 import * as path from 'path';
 import * as web from './web';
 import * as decorate from './decorate';
@@ -20,7 +21,7 @@ const cats = {
 export function activate(context: vscode.ExtensionContext) {
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "visual-embedded-rust" is now active!');
+	console.log('visual-embedded-rust active: ');  //  console.log(context);
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('visualEmbeddedRust.start', () => {
@@ -159,20 +160,39 @@ class CatCodingPanel {
 							editor = this._editor; 
 							if (!editor || !CatCodingPanel._isValidEditor(editor)) { console.log('No active editor'); return; }
 						}
+						const webview = this._panel.webview;
 
-						// Get the text of the doc.
+						// Send a `loadDoc` message to our webview with the text.
+						function loadDoc(text0: string) {
+							webview.postMessage({ 
+								command: 'loadDoc',
+								text:    text0,
+							});
+						}
+
+						// Get the text of the doc. If file is not empty, send a `loadDoc` message to our webview with the text.
 						const text = editor.document.getText();
-						if (!text) { console.log('Missing text'); return; }
-
-						//  Remember the active text editor. We will return this at the next call.
-						this._editor = editor;
-
-						// Send a `load` message to our webview with the text.
-						this._panel.webview.postMessage({ 
-							command: 'loadDoc',
-							text:    text,
-						});
-						return;
+						if (text.length > 0) {
+							loadDoc(text);
+							//  Remember the active text editor. We will return this at the next call.
+							this._editor = editor;
+							return;
+						}
+						
+						// If file is empty, populate with template.
+						vscode.window.showInformationMessage('Populate empty Rust file with Visual Embedded Rust program?', 'OK', 'Cancel')
+							.then(selected => {
+								if (selected !== 'OK') { return; }
+								if (!editor) { return; }
+								const replayPath = path.join(__filename, '..', '..', 'resources', 'template.rs');
+								const buf = fs.readFileSync(replayPath);
+								const template = buf.toString();
+								editor.edit(editBuilder => {
+									// Populate the template and notify webview.
+									editBuilder.insert(new vscode.Position(0, 0), template);
+									loadDoc(template);
+								});
+							});
 					}	
 
 					//  Update the Visual Rust document with the generated Rust code and the updated blocks XML.
@@ -259,8 +279,8 @@ class CatCodingPanel {
 		if (!filename.endsWith(".rs") && !filename.endsWith(".RS")) { console.log('Not a .rs file'); return false; }							
 
 		// Get the text of the doc.
-		const text = editor.document.getText();
-		if (!text) { console.log('Missing text'); return false; }
+		// const text = editor.document.getText();
+		// if (!text) { console.log('Missing text'); return false; }
 		return true;
 	}
 
