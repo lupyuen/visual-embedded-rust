@@ -57,14 +57,16 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(disposable);
 
+	// To enable replay, the following must be enabled...
+	
 	// Activate the decorators.
-	decorate.activate(context);
+	// decorate.activate(context);
 
 	// Activate the declaration view.
-	declarations.activate(context);
+	// declarations.activate(context);
 
-	// Load the replay log.
-	replay.activate(context);
+	// Disabled the replay log.
+	// replay.activate(context);
 }
 
 /**
