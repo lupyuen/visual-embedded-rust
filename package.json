@@ -1,8 +1,12 @@
 {
 	"name": "visual-embedded-rust",
 	"displayName": "Visual Embedded Rust",
-	"description": "",
+	"description": "Visual editor for Embedded Rust",
 	"version": "0.0.1",
+	"publisher": "LeeLupYuen",
+	"repository": {
+		"url": "https://github.com/lupyuen/visual-embedded-rust"
+	},
 	"engines": {
 		"vscode": "^1.36.0"
 	},
@@ -13,7 +17,7 @@
 		"onCommand:visualEmbeddedRust.helloWorld",
 		"onCommand:visualEmbeddedRust.start",
 		"onCommand:visualEmbeddedRust.doRefactor",
-		"onWebviewPanel:catCoding"
+		"onWebviewPanel:visualEmbeddedRust"
 	],
 	"main": "./out/extension.js",
 	"contributes": {

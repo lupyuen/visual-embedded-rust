@@ -76,7 +76,7 @@ class CatCodingPanel {
 	 */
 	public static currentPanel: CatCodingPanel | undefined;
 
-	public static readonly viewType = 'catCoding';
+	public static readonly viewType = 'visualEmbeddedRust';
 
 	private readonly _panel: vscode.WebviewPanel;
 	private readonly _extensionPath: string;
