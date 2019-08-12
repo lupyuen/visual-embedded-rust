@@ -16,12 +16,10 @@ const cats = {
 	'Testing Cat': 'https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif'
 };
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
+// Called when extension is activated, the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
 	console.log('visual-embedded-rust active: ');  //  console.log(context);
+	// vscode.window.showInformationMessage('To edit visually, click the Rust source file');
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('visualEmbeddedRust.start', () => {
@@ -158,7 +156,12 @@ class CatCodingPanel {
 						let editor = vscode.window.activeTextEditor;
 						if (!editor || !CatCodingPanel._isValidEditor(editor)) { 
 							editor = this._editor; 
-							if (!editor || !CatCodingPanel._isValidEditor(editor)) { console.log('No active editor'); return; }
+							if (!editor || !CatCodingPanel._isValidEditor(editor)) { 
+								editor = vscode.window.visibleTextEditors[0];
+								if (!editor || !CatCodingPanel._isValidEditor(editor)) { 
+									console.log('No active editor'); return; 
+								}
+							}
 						}
 						const webview = this._panel.webview;
 
