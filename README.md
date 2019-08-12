@@ -1,14 +1,18 @@
-# visual-embedded-rust: Visual Studio Extension for Visual Embedded Rust
+# visual-embedded-rust
+
+Create and edit Embedded Rust programs visually by dragging and dropping blocks
+
+## Features
 
 Watch the demo: https://youtu.be/jYo8B8c7T3Y
 
-Read the articles:
+Read the articles...
 
 1. [_"Rust Rocks NB-IoT! STM32 Blue Pill with Quectel BC95-G on Apache Mynewt"_](https://medium.com/@ly.lee/rust-rocks-nb-iot-stm32-blue-pill-with-quectel-bc95-g-on-apache-mynewt-ef62a7e28f7e)
 
 1. [_"Visual Programming with Embedded Rust? Yes we can with Apache Mynewt and Google Blockly!"_](https://medium.com/@ly.lee/visual-programming-with-embedded-rust-yes-we-can-with-apache-mynewt-and-google-blockly-8b67ef7412d7)
 
-## Features
+## Usage
 
 1. In the Visual Studio Code Explorer, create a new empty Rust source file like `main.rs`
 
@@ -16,7 +20,9 @@ Read the articles:
 
 1. Click `Visual Editor` at the top right of the editor
 
-1. When prompted to populate the visual program, click `OK`
+1. When prompted to populate the visual program into the Rust source file, click `OK`
+
+1. Click the Rust source file to see the generated Rust code. Save the file to save the visual program.
 
 ![Visual Embedded Rust editor with generated Rust code](images/editor.png)
 
