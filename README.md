@@ -32,7 +32,7 @@ The source code is located at [`github.com/lupyuen/visual-embedded-rust`](https:
 
 1. Main logic for the VSCode Extension is in [`extension.ts`](src/extension.ts)
 
-1. The extension creates a [WebView that embeds the HTML code](src/extension.ts#L88-L144) from Google Blockly. [HTML code is here](src/web.ts)
+1. The extension creates a [WebView that embeds the HTML code](src/extension.ts#L88-L144) from [Google Blockly](https://developers.google.com/blockly/guides/overview). [HTML code for the WebView is here](src/web.ts)
 
 1. The VSCode Extension and the WebView are running in [separate JavaScript sandboxes](https://code.visualstudio.com/api/extension-guides/webview#scripts-and-message-passing). Hence we'll be using VSCode Message Passing to communicate between the VSCode Extension and WebView, as we shall soon see...
 
