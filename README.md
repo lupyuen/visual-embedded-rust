@@ -22,7 +22,9 @@ Read the articles...
 
 1. When prompted to populate the visual program into the Rust source file, click `OK`
 
-1. Click the Rust source file to see the generated Rust code. Save the file to save the visual program.
+1. Click the Rust source file to see the generated Rust code. Save the file to save the visual program. Don't edit the Rust source file manually, always use the visual editor.
+
+[Sample Rust source file containing generated Rust code and XML blocks](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/rust/visual/src/lib.rs)
 
 ![Visual Embedded Rust editor with generated Rust code](images/editor.png)
 
