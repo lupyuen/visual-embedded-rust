@@ -1,6 +1,8 @@
 # visual-embedded-rust
 
-Create and edit Embedded Rust programs visually by dragging and dropping blocks
+- Create and edit Embedded Rust programs visually by dragging and dropping blocks
+
+- Generates Embedded Rust code for [STM32 Blue Pill](https://medium.com/swlh/super-blue-pill-like-stm32-blue-pill-but-better-6d341d9347da?source=friends_link&sk=956087171b9b9efcc484ea60b9c78c16) with [Apache Mynewt](https://mynewt.apache.org/) realtime operating system
 
 ## Features
 
@@ -8,9 +10,9 @@ Watch the demo: https://youtu.be/jYo8B8c7T3Y
 
 Read the articles...
 
-1. [_"Rust Rocks NB-IoT! STM32 Blue Pill with Quectel BC95-G on Apache Mynewt"_](https://medium.com/@ly.lee/rust-rocks-nb-iot-stm32-blue-pill-with-quectel-bc95-g-on-apache-mynewt-ef62a7e28f7e)
+1. [_"Rust Rocks NB-IoT! STM32 Blue Pill with Quectel BC95-G on Apache Mynewt"_](https://medium.com/@ly.lee/rust-rocks-nb-iot-stm32-blue-pill-with-quectel-bc95-g-on-apache-mynewt-ef62a7e28f7e?source=friends_link&sk=aaa21371f68a07c543066b6b89a760f0)
 
-1. [_"Visual Programming with Embedded Rust? Yes we can with Apache Mynewt and Google Blockly!"_](https://medium.com/@ly.lee/visual-programming-with-embedded-rust-yes-we-can-with-apache-mynewt-and-google-blockly-8b67ef7412d7)
+1. [_"Visual Programming with Embedded Rust? Yes we can with Apache Mynewt and Google Blockly!"_](https://medium.com/@ly.lee/visual-programming-with-embedded-rust-yes-we-can-with-apache-mynewt-and-google-blockly-8b67ef7412d7?source=friends_link&sk=353fb92b6f20ebf885ff5c9be44fd6f2)
 
 ## Usage
 
@@ -39,6 +41,50 @@ To build the generated Rust program...
 1. Delete the files `app_network.rs` and `app_sensor.rs` in that folder
 
 1. Rebuild by clicking `Terminal → Run Task → [2] Build bluepill_my_sensor`
+
+## Generated Code
+
+To making coding easier for beginners, the extension generates Typeless Rust code like this...
+
+```rust
+#[infer_type]  //  Infer the missing types
+fn start_sensor_listener(sensor_name: _, sensor_key: _, sensor_type: _, poll_time: _) ...
+    //  Call Mynewt API
+    sensor::set_poll_rate_ms(sensor_name, poll_time) ? ;
+```
+
+When the typeless code is compiled, the [`infer_type` Procedural Macro](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/rust/macros/src/infer_type.rs) infers the types by matching the variables against the Mynewt API...
+
+```rust
+//  Call Mynewt API
+sensor::set_poll_rate_ms(sensor_name, poll_time) ? ;  
+//  `sensor_name` inferred as type `&Strn`
+//  `poll_time`   inferred as type `u32`
+```
+
+The macro then injects the inferred types into the typeless code...
+
+```rust
+fn start_sensor_listener(sensor_name: &Strn, sensor_key: &'static Strn,
+                         sensor_type: sensor_type_t, poll_time: u32) ...
+```
+
+The inferred types are stored in `infer.json`. The enables the types inferred in one function to be inferred for other functions...
+
+```json
+    "start_sensor_listener": [
+        [ "sensor_name", "&Strn" ],
+        [ "sensor_key",  "&'static Strn" ],
+        [ "sensor_type", "sensor_type_t" ],
+        [ "poll_time",   "u32" ]
+    ],
+    "send_sensor_data": [
+        [ "sensor_data", "&SensorValue" ]
+    ],
+    "handle_sensor_data": [
+        [ "sensor_data", "&SensorValue" ]
+    ]
+```
 
 ## Inside The Extension
 
