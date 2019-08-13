@@ -14,7 +14,7 @@ Read the articles...
 
 ## Usage
 
-1. In the Visual Studio Code Explorer, create a new empty Rust source file like `main.rs`
+1. In the Visual Studio Code Explorer, create a new empty Rust source file like `lib.rs`
 
 1. Edit the Rust file
 
@@ -27,6 +27,18 @@ Read the articles...
 [Sample Rust source file containing generated Rust code and XML blocks](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/rust/visual/src/lib.rs)
 
 ![Visual Embedded Rust editor with generated Rust code](images/editor.png)
+
+## Build
+
+To build the generated Rust program...
+
+1. Follow the [instructions here to install Embedded Rust and Apache Mynewt](https://medium.com/@ly.lee/install-embedded-rust-and-apache-mynewt-for-visual-studio-code-on-windows-533ac87b35ad)
+
+1. Copy the Rust source file containing the generated code to `rust/app/src/lib.rs`. Overwrite the existing file.
+
+1. Delete the files `app_network.rs` and `app_sensor.rs` in that folder
+
+1. Rebuild by clicking `Terminal → Run Task → [2] Build bluepill_my_sensor`
 
 ## Inside The Extension
 
