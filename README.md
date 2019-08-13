@@ -69,3 +69,13 @@ cd media
 git clone https://github.com/lupyuen/blockly-mynewt-rust
 git clone https://github.com/google/closure-library
 ```
+
+## Release Notes
+
+For changelog refer to...
+
+1.  [`github.com/lupyuen/visual-embedded-rust/commits/master`](https://github.com/lupyuen/visual-embedded-rust/commits/master)
+
+1.  [`github.com/lupyuen/blockly-mynewt-rust/commits/master`](https://github.com/lupyuen/blockly-mynewt-rust/commits/master)
+
+1.  [`github.com/lupyuen/stm32bluepill-mynewt-sensor/commits/rust-nbiot`](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/commits/rust-nbiot)
