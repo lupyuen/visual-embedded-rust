@@ -86,6 +86,8 @@ The inferred types are stored in `infer.json`. The enables the types inferred in
     ]
 ```
 
+![Inferring the missing types in the generated Rust code](images/typeless-rust.png)
+
 ## Inside The Extension
 
 The source code is located at [`github.com/lupyuen/visual-embedded-rust`](https://github.com/lupyuen/visual-embedded-rust)
