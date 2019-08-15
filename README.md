@@ -6,9 +6,11 @@
 
 ## Features
 
-Watch the demo: https://youtu.be/jYo8B8c7T3Y
+Watch the demo: https://youtu.be/ytGa-7q6sqY
 
 Read the articles...
+
+1. [_"Visual Embedded Rust Programming with Visual Studio Code" (Draft Version)_](https://medium.com/@ly.lee/visual-embedded-rust-programming-with-visual-studio-code-1bc1262e398c)
 
 1. [_"Rust Rocks NB-IoT! STM32 Blue Pill with Quectel BC95-G on Apache Mynewt"_](https://medium.com/@ly.lee/rust-rocks-nb-iot-stm32-blue-pill-with-quectel-bc95-g-on-apache-mynewt-ef62a7e28f7e?source=friends_link&sk=aaa21371f68a07c543066b6b89a760f0)
 
