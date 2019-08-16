@@ -16,6 +16,8 @@ Read the articles...
 
 1. [_"Visual Programming with Embedded Rust? Yes we can with Apache Mynewt and Google Blockly!"_](https://medium.com/@ly.lee/visual-programming-with-embedded-rust-yes-we-can-with-apache-mynewt-and-google-blockly-8b67ef7412d7?source=friends_link&sk=353fb92b6f20ebf885ff5c9be44fd6f2)
 
+![Visual Embedded Rust](images/animation.gif)
+
 ## Usage
 
 1. In the Visual Studio Code Explorer, create a new empty Rust source file like `lib.rs`
