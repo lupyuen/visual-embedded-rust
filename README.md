@@ -6,7 +6,11 @@
 
 # Features
 
-Watch the demo: https://youtu.be/ytGa-7q6sqY
+Watch the demo...
+
+[微博视频](https://weibo.com/7285313566/I2MWZ1CnK)
+
+[YouTube Video](https://youtu.be/ytGa-7q6sqY)
 
 Read the articles...
 
@@ -192,8 +196,7 @@ Remember: Always connect the antenna before powering up the NB-IoT module!
 
 If you’re using Windows: Make sure that the ST-Link Driver has been installed before connecting ST-Link to your computer
 
-![SIM partially exposed to show the unusual orientation
-](images/sim-slot.png) <br>
+![SIM partially exposed to show the unusual orientation](images/sim-slot.png) <br>
 _SIM partially exposed to show the unusual orientation_
 
 # Flash The Firmware To Blue Pill
@@ -237,6 +240,10 @@ _SIM partially exposed to show the unusual orientation_
 Our Blue Pill should now poll its internal temperature sensor every 10 seconds. It should also transmit the temperature data to the CoAP server hosted at thethings.io.
 
 [The Blue Pill log should look like this](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/logs/visual.log). The log is explained [in this article](https://medium.com/@ly.lee/connect-stm32-blue-pill-to-nb-iot-with-quectel-bc95-g-and-apache-mynewt-c99a9d8417a9?source=friends_link&sk=34fb9befbea42e98cb5942d66f594027).
+
+[微博视频](https://weibo.com/7285313566/I2MZOeP0F)
+
+[YouTube Video](https://youtu.be/PL4Yj3IS5ck)
 
 Upon clicking the URL `https://blue-pill-geolocate.appspot.com/?device=5cfca8c…` that’s shown in the Blue Pill log, we’ll see a web page that displays the temperature received by the server at thethings.io.
 The server has converted the raw temperature into degrees Celsius. We convert the temperature at the server to conserve RAM and ROM on Blue Pill.
@@ -290,6 +297,10 @@ How was the `On Start` function created?
 By dragging and dropping the blocks from the Blocks Bar at the left of the Visual Program.
 That’s how we create a Visual Program… By arranging the blocks to compose a program!
 
+[微博视频](https://weibo.com/7285313566/I2MOamxS9)
+
+[YouTube Video](https://youtu.be/Qw1N-01PAy8)
+
 ![Visual Embedded Rust](images/animation.gif)
 
 # Function 2: Start Sensor Listener
@@ -331,6 +342,10 @@ We create a sensor listener (stored as `listener`) by calling the system functio
 To register the Listener Function in the system, we call the system function `register_listener`, passing in the `sensor_driver` and the sensor listener that we have just created.
 
 After that, the operating system will automatically read the temperature sensor every 10 seconds and call our function `handle_sensor_data` with the temperature value.
+
+[微博视频](https://weibo.com/7285313566/I2MWZ1CnK)
+
+[YouTube Video](https://youtu.be/ytGa-7q6sqY)
 
 # Function 3: Handle Sensor Data
 
@@ -439,6 +454,10 @@ The `infer_type` macro scans the Typeless Rust program recursively, hence we see
 Green ticks at the top left mean that we have successfully inferred the types.
 
 The recursive Rust code parsing was implemented with the excellent `syn` crate. The `quote` crate was used to emit the transformed Rust code.
+
+[微博视频](https://weibo.com/7285313566/I2N12aA4W)
+
+[YouTube Video](https://youtu.be/1SCLlwK5KwE)
 
 ![How the infer_type macro infers missing types, animated in Visual Studio Code with the Visual Embedded Rust Extension](images/infer-animate.gif) <br>
 _How the infer_type macro infers missing types, animated in Visual Studio Code with the Visual Embedded Rust Extension_
