@@ -24,6 +24,46 @@ Read the articles...
 
 ![Visual Embedded Rust](images/animation.gif)
 
+# Document Contents
+
+1. Usage
+
+1. Build The Firmware
+
+1. Connect The Hardware
+
+1. Flash The Firmware To Blue Pill
+
+1. Run The Program
+
+1. Function 1: On Start
+
+1. Function 2: Start Sensor Listener
+
+1. Function 3: Handle Sensor Data
+
+1. Function 4: Send Sensor Data
+
+1. Quectel NB-IoT AT Commands
+
+1. Typeless Rust
+
+1. How Small Is Rust?
+
+1. Why Blue Pill? Power vs Price Compromise
+
+1. Why Apache Mynewt? Evolution of Rust on Bare Metal
+
+1. How Safe Is Rust? Safe Wrappers for Mynewt
+
+1. Inside The Visual Embedded Rust Extension for Visual Studio Code
+
+1. Building The Visual Embedded Rust Extension
+
+1. References
+
+1. Release Notes
+
 # Usage
 
 1. In Visual Studio Code, Click `File → Open` to open any folder
@@ -218,7 +258,7 @@ Both yellow jumpers on Blue Pill should be set to the 0 position, as shown in th
 
 Our Blue Pill should now poll its internal temperature sensor every 10 seconds. It should also transmit the temperature data to the CoAP server hosted at thethings.io.
 
-[The Blue Pill log should look like this](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/logs/visual.log). The log is explained [in this article](https://medium.com/@ly.lee/connect-stm32-blue-pill-to-nb-iot-with-quectel-bc95-g-and-apache-mynewt-c99a9d8417a9?source=friends_link&sk=34fb9befbea42e98cb5942d66f594027).
+[The Blue Pill log should look like this](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/logs/visual.log). The log is explained below in the "Quectel NB-IoT AT Commands" section.
 
 [微博视频](https://weibo.com/7285313566/I2MZOeP0F)
 
@@ -229,18 +269,6 @@ The server has converted the raw temperature into degrees Celsius. We convert th
 
 ![Display of sensor data received from our Blue Pill](images/sensor-web.png) <br>
 _Display of sensor data received from our Blue Pill_
-
-The following files may be useful for reference…
-
-- [Disassembly of the Rust Application build](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/logs/libapp-demangle.S)
-
-- [Disassembly of the Rust Crates](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/logs/rustlib-demangle.S)
-
-- [Disassembly of the entire firmware](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/logs/my_sensor_app.elf.lst)
-
-- [Memory map of the firmware](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/logs/my_sensor_app.elf.map)
-
-[Read more about hosting Rust applications on Mynewt](https://medium.com/@ly.lee/hosting-embedded-rust-apps-on-apache-mynewt-with-stm32-blue-pill-c86b119fe5f?source=friends_link&sk=f58f4cf6c608fded4b354063e474a93b)
 
 # Function 1: On Start
 
@@ -377,6 +405,146 @@ This effectively tells the Rust Compiler: _“Yes I’m setting the variable `_p
 At the end of the function, we display a URL in the Blue Pill log that contains the Device ID. The URL looks like this: https://blue-pill-geolocate.appspot.com/?device=5cfca8c…
 We’ll click this URL to verify that the server has received our sensor data.
 
+# Rust Source Files
+
+The Rust source files are located in the `rust` folder…
+
+`rust/app`: Rust application that polls the internal temperature sensor and transmits the sensor data over NB-IoT
+
+If you’re using Visual Embedded Rust, overwrite the file `src/lib.rs` by your Visual Program source file. Delete `app_network.rs` and `app_sensor.rs` in the src folder.
+
+Rebuild the application by clicking `Terminal → Run Task → [2] Build bluepill_my_sensor`
+
+`rust/visual`: Sample Visual Embedded Rust program
+
+`rust/mynewt`: Rust Safe Wrappers for Mynewt OS and libraries
+
+`rust/macros`: Rust Procedural Macros for generating Safe Wrappers, inferring types and other utility macros like `strn!()`
+
+# Program Settings
+
+The program settings may be found in the file
+[targets/bluepill_my_sensor/syscfg.yml](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/nbiot/targets/bluepill_my_sensor/syscfg.yml)
+
+`COAP_HOST, COAP_PORT`: The program will send CoAP messages to this IP address and port number, which defaults to the CoAP server at thethings.io.
+Keep the default settings if you wish to view your sensor data at blue-pill-geolocate.appspot.com.
+Change the setting to use your own CoAP server instead of thethings.io
+
+`COAP_URI`: The CoAP message will be delivered to this URI at the CoAP server (which defaults to `coap.thethings.io`).
+
+Keep the default settings if you wish to view your sensor data at blue-pill-geolocate.appspot.com.
+
+For thethings.io, the last part `IVRi… `is the Thing Token. If you wish to send sensor data to your own Thing at thethings.io, replace the last part of the URI with your Thing Token.
+
+For the purpose of NB-IoT Education, I’ll allow you to transmit sensor data to the Thing Token IVRi… from my personal, paid thethings.io account. Which will forward the sensor data to `blue-pill-geolocate.appspot.com` for viewing.
+
+`NBIOT_BAND`: The program connects to this NB-IoT Frequency Band. The Frequency Band depends on your country and your NB-IoT network operator. Check with your NB-IoT network operator for the Frequency Band to use.
+
+# Quectel NB-IoT AT Commands
+
+We'll look at this [Blue Pill log](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/logs/visual.log) to understand the Quectel NB-IoT AT Commands sent by our Blue Pill to the Quectel BC95-G NB-IoT module...
+
+Blue Pill connects to the Quectel module via the UART port at 9600 bps, 8 data bits, No parity bit, 1 stop bit.
+
+For every AT command sent, Blue Pill sends `CR` (`Ctrl-M` or `0x0d`) and `LF` (`Ctrl-J` or `0x0a`) at the end of each AT command.
+
+![](images/at-commands.png)
+
+## [0] Prepare to transmit
+
+First we reboot the Quectel module to start from a fresh, clean state…
+
+| AT Commands (in bold) | Remarks |
+| :--- | :--- |
+| | |
+|  `Boot: Unsigned` <br>   `Security B.. Verified` <br>   `Protocol A.. Verified` <br>   `Apps A...... Verified` <br>  ` ` <br>   `REBOOT_CAUSE_SECURITY_RESET_PIN` <br>   `Neul` <br>   `OK` <br> | When connected to our computer, the Quectel module shows `REBOOT_CAUSE_SECURITY_RESET_PIN`. This is normal |
+| **`AT+NCONFIG=AUTOCONNECT,FALSE`** | Disable auto-connecting to the NB-IoT network upon restarting |
+| `OK` | This enables us to specify which NB-IoT Band to search, which should be faster |
+| **`AT+NRB`** | Reboot the module |
+|  `REBOOTING` <br>   `-f-f�-f` <br>   `-f�` <br>   `Boot:Unsigned` <br>   `SecurityB..Verified` <br>   `ProtocolA..Verified` <br>   `AppsA......Verified` <br>   `REBOOT_CAUSE_APPLICATION_AT` <br>   `Neul` <br>   `OK` <br> | Module reboots |
+
+## [1] Attach to network
+
+After rebooting, we specify the network settings and attach to the NB-IoT network…
+
+| AT Commands (in bold) | Remarks |
+| :--- | :--- |
+| **`AT+NBAND=8`** | Select NB-IoT Band 8 |
+| `OK` | This is specific to your NB-IoT operator |
+| **`AT+CFUN=1`** | Enable full functionality |
+| `OK` | Now we may start attaching to the network |
+| **`AT+CGATT=1`** | Attach to the NB-IoT network |
+| `OK` | Attach operation begins |
+| **`AT+CEREG?`** | Are we registered to the NB-IoT network? |
+| `=+CEREG:0,1` <br> `OK` | `0,1` means we have been registered <br> `0,2` means we should wait a few seconds then recheck via `AT+CEREG?` |
+| **`AT+CGATT?`** | Are we attached to the NB-IoT network? |
+| `=+CGATT:1` <br> `OK` | `1` means we are attached to the NB-IoT network. Ready to transmit. |
+
+## [2] Transmit message
+
+We are now ready to transmit. For the specific AT command for transmitting our message, look in the [CoAP Message Encoder Google Sheet](https://docs.google.com/spreadsheets/d/1k72R9CWKxu8_AsQURA3iOtTTlE08Qks0gFcuBJZtTqo/edit?usp=sharing).
+
+| AT Commands (in bold) | Remarks |
+| :--- | :--- |
+| **`AT+QREGSWT=2`** | Don't use Huawei IoT Server |
+| `OK` | |
+| **`AT+NSOCR=DGRAM,17,0,1`** | Allocate a local network port. `DGRAM,17` means UDP, `0` means allocate a new port, `1` means allow receiving of messages from server |
+| `1` <br> `OK` | `1` is the local port allocated |
+| **`AT+NSOST=1,104.199.85.211,5683,147,`** _(data omitted)_ **`,100`**  | Transmit the CoAP UDP packet using local port `1` to server IP address `104.199.85.211`, server port `5683` with size `147` bytes and msg sequence `100`. Use the AT command from the Google Sheet |
+| `1,147` <br> `OK` | `1` is the local port |
+| | `147` is the number of bytes being transmitted |
+| `=+NSOSTR:1,100,1` | `1,100,1` means port `1`, msg sequence `100` was transmitted (`1`) |
+
+## [3] Receive response
+
+The CoAP Server at thethings.io returns a response to our message…
+
+| AT Commands (in bold) | Remarks |
+| :--- | :--- |
+| | |
+| `=+NSONMI:1,35` | `1,35` means port `1` has received a server response of `35` bytes |
+| **`AT+NSORF=1,35`** | Read the server response for port `1`, returning `35` bytes |
+| `1,104.199.85.211,5683,35,58410001` <br> `0000164A272AE239C132FF7B227374617` <br> `47573223A2263726561746564227D,0` <br> `OK` | Server response for port `1`, server IP address `104.199.85.211`, server port `5683` |
+| **`AT+NSOCL=1`** | Close port 1 |
+| `OK` | |
+
+We may use Wireshark to decode the above server response (which is another CoAP message)…
+
+```
+58 41 00 01 00 00 16 4A 27 2A E2 39 C1
+32 FF 7B 22 73 74 61 74 75 73 22 3A 22
+63 72 65 61 74 65 64 22 7D
+```
+
+See the section _“Advanced Topic: What’s Inside The CoAP Message?”_ in _“[Connect STM32 Blue Pill to ESP8266 with Apache Mynewt](https://medium.com/@ly.lee/connect-stm32-blue-pill-to-esp8266-with-apache-mynewt-7edceb9e3b8d)”_
+
+Insert a space between each byte before decoding with Wireshark. The decoded response from thethings.io should read…
+
+```
+{"status":"created"}
+```
+
+Which means that the Thing State has been successfully updated in thethings.io.
+
+## [4] Diagnostics
+
+Here are some AT commands useful for troubleshooting…
+
+| AT Commands (in bold) | Remarks |
+| :--- | :--- |
+| **`AT+CGPADDR`** | Display the IP address allocated by the network |
+| `=+CGPADDR:0,10.26.255.38` `OK` | IP address of the module |
+| **`AT+NUESTATS`** | Display the network statistics |
+|  `Signal power:-758` <br>   `Total power:-706` <br>   `TX power:230` <br>   `TX time:438` <br>   `RX time:16193` <br>   `Cell ID:3535136` <br>   `ECL:0` <br>   `SNR:132` <br>   `EARFCN:3518` <br>   `PCI:22` <br>   `RSRQ:-108` <br>   `OPERATOR MODE:4` <br>   `OK` <br>  | Network statistics of the module |
+
+[Read more about Quectel NB-IoT AT Commands](https://medium.com/@ly.lee/connect-stm32-blue-pill-to-nb-iot-with-quectel-bc95-g-and-apache-mynewt-c99a9d8417a9?source=friends_link&sk=34fb9befbea42e98cb5942d66f594027).
+
+# Configuring the CoAP Server at thethings.io
+
+TODO
+
+![](images/thethingsio.png)
+
 # Typeless Rust
 
 To making coding easier for beginners, the extension generates [Typeless Rust code like this](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/rust/visual/src/lib.rs)...
@@ -458,7 +626,7 @@ _RAM and ROM usage of the Visual Embedded Rust firmware_
 
 | | |
 |:- |:- |
-| ![](images/blue-pill.png) | Blue Pill was chosen for the tutorial because it best represents a real-world, low-cost microcontroller with limited RAM and ROM. <br><br> The microcontroller is found in many off-the-shelf products, even [flying drones](https://timakro.de/blog/bare-metal-stm32-programming/)! <br><br> To be clear what’s a “Blue Pill”… The heart of Blue Pill is an STMicroelectronics __STM32F103C8T6__ microcontroller. <br><br> That’s a tiny module surface-mounted on a Blue printed-circuit board (hence the name Blue Pill). Without the Blue (and Yellow) parts, it would be extremely difficult for us to experiment with the microcontroller. So we buy a Blue Pill and use it like an Arduino. |
+| ![](images/blue-pill.png) <br> _STMicroelectronics STM32F103C8T6 microcontroller on Blue Pill_ | Blue Pill was chosen for the tutorial because it best represents a real-world, low-cost microcontroller with limited RAM and ROM. <br><br> The microcontroller is found in many off-the-shelf products, even [flying drones](https://timakro.de/blog/bare-metal-stm32-programming/)! <br><br> To be clear what’s a “Blue Pill”… The heart of Blue Pill is an STMicroelectronics __STM32F103C8T6__ microcontroller. <br><br> That’s a tiny module surface-mounted on a Blue printed-circuit board (hence the name Blue Pill). Without the Blue (and Yellow) parts, it would be extremely difficult for us to experiment with the microcontroller. So we buy a Blue Pill and use it like an Arduino. |
 
 | | |
 |:- |:- |
@@ -584,6 +752,21 @@ cd media
 git clone https://github.com/lupyuen/blockly-mynewt-rust
 git clone https://github.com/google/closure-library
 ```
+
+# References
+
+The following files may be useful for reference…
+
+- [Disassembly of the Rust Application build](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/logs/libapp-demangle.S)
+
+- [Disassembly of the Rust Crates](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/logs/rustlib-demangle.S)
+
+- [Disassembly of the entire firmware](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/logs/my_sensor_app.elf.lst)
+
+- [Memory map of the firmware](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/logs/my_sensor_app.elf.map)
+
+[Read more about hosting Rust applications on Mynewt](https://medium.com/@ly.lee/hosting-embedded-rust-apps-on-apache-mynewt-with-stm32-blue-pill-c86b119fe5f?source=friends_link&sk=f58f4cf6c608fded4b354063e474a93b)
+
 
 # Release Notes
 
