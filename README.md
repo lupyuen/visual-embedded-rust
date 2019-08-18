@@ -400,7 +400,7 @@ We’ll click this URL to verify that the server has received our sensor data.
 
 # Typeless Rust
 
-To making coding easier for beginners, the extension generates Typeless Rust code like this...
+To making coding easier for beginners, the extension generates [Typeless Rust code like this](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/rust/visual/src/lib.rs)...
 
 ```rust
 #[infer_type]  //  Infer the missing types
@@ -425,7 +425,7 @@ fn start_sensor_listener(sensor_name: &Strn, sensor_key: &'static Strn,
                          sensor_type: sensor_type_t, poll_time: u32) ...
 ```
 
-The inferred types are stored in [`infer.json`](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/infer.json). The enables the types inferred in one function to be inferred for other functions...
+The inferred types are stored in [`infer.json`](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/infer.json). The enables the `infer_type` macro to infer new types based on types already inferred for other functions...
 
 ```json
     "start_sensor_listener": [
