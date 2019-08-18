@@ -44,7 +44,15 @@ Read the articles...
 
 1. Function 4: Send Sensor Data
 
+1. Rust Source Files
+
+1. Program Settings
+
+1. CoAP: Constrained Application Protocol
+
 1. Quectel NB-IoT AT Commands
+
+1. Configuring the CoAP Server at thethings.io
 
 1. Typeless Rust
 
@@ -258,13 +266,14 @@ Both yellow jumpers on Blue Pill should be set to the 0 position, as shown in th
 
 Our Blue Pill should now poll its internal temperature sensor every 10 seconds. It should also transmit the temperature data to the CoAP server hosted at thethings.io.
 
-[The Blue Pill log should look like this](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/logs/visual.log). The log is explained below in the "Quectel NB-IoT AT Commands" section.
+[The Blue Pill log should look like this](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/logs/visual.log). The log is explained below in the _"Quectel NB-IoT AT Commands"_ section.
 
 [微博视频](https://weibo.com/7285313566/I2MZOeP0F)
 
 [YouTube Video](https://youtu.be/PL4Yj3IS5ck)
 
 Upon clicking the URL `https://blue-pill-geolocate.appspot.com/?device=5cfca8c…` that’s shown in the Blue Pill log, we’ll see a web page that displays the temperature received by the server at thethings.io.
+
 The server has converted the raw temperature into degrees Celsius. We convert the temperature at the server to conserve RAM and ROM on Blue Pill.
 
 ![Display of sensor data received from our Blue Pill](images/sensor-web.png) <br>
@@ -440,6 +449,127 @@ For the purpose of NB-IoT Education, I’ll allow you to transmit sensor data to
 
 `NBIOT_BAND`: The program connects to this NB-IoT Frequency Band. The Frequency Band depends on your country and your NB-IoT network operator. Check with your NB-IoT network operator for the Frequency Band to use.
 
+# CoAP: Constrained Application Protocol
+
+_Note: The example below assumes that our device is transmiiting the temperature as a floaing-point value like `tmp: 28.9`. However our Visual Embedded Rust program transmits the temperature as a raw integer like `t: 1879`. Please do the necessary mental adjustments_
+
+## Are You Connected? Or Connectionless?
+
+![](images/coap1.png)
+
+How do we achieve “low cost, long battery life, and high connection density” with NB-IoT? Next time you attend a party, try this…
+
+Mingle around as many people as you can. Listen to what EVERYONE has to say.
+
+When a conversation gets boring, just move away without saying anything.
+
+Don’t feel obligated to continue any conversation. It’s your right to listen as much or as little as you want. You’re NOT committed to stay CONNECTED to any person at the party.
+
+Yes your friends will find you strangely anti-social. You will miss out on some great stories from your friends, but then again, they are probably repeating the same old stories.
+
+BUT you will learn lots more, from more people. And feel less drained.
+
+That’s the better way… the CONNECTIONLESS way!
+
+We have been using TCP (Transmission Control Protocol) since the beginning of the internet to connect our gadgets (HTTP and MQTT are two popular protocols based on TCP). However TCP is Connection-Oriented — when two devices are connected via TCP, they need to stay connected… or they will be penalised.
+
+If any packets are dropped (due to poor network coverage or congestion) or delayed, both devices will need to resynchronise their TCP windows by retransmitting their packets. Which may lead to severe problems like the MQTT Server congestion on Moon Base One!
+
+## The Connectionless Way: Change TCP to UDP
+
+In a Connectionless Network there’s no commitment to stay connected to any device: Just transmit or receive a message. And move on. (Like our Connectionless Party!)
+
+![](images/coap2.png)
+
+Instead of establishing a TCP connection, we transmit a UDP (User Datagram Protocol) packet without waiting for the acknowledgement. 
+
+But because they are Connectionless, UDP packets do not enjoy guaranteed delivery.
+
+Most UDP packets are delivered properly, but if any packets are dropped (due to poor network coverage or congestion), UDP devices don’t attempt to resynchronise and retransmit the lost packets.
+
+Isn’t it a serious problem when packets disappear in our IoT network? Well, do we really need to receive every single sensor reading? Instead of suffering a server failure or network congestion, could we compromise by dropping a couple of sensor messages? That’s how we achieve High Connection Density in NB-IoT!
+
+When we go Connectionless, our gadgets become a lot simpler to build… no messy sliding window protocols and waiting forever! Thus our NB-IoT gadgets are Low Cost, and enjoy Long Battery Life!
+
+💎 Many other things are switching to the simpler Connectionless way… 1️⃣ HTTP version 3 will switch from TCP to a UDP protocol named QUIC. Because it just works better on lossy mobile networks. 2️⃣ YouTube and many video streaming services are already running on RTSP based on UDP. It allows video quality to be negotiated in real time based on network conditions. 3️⃣ Most massively multiplayer games already use UDP to achieve lower latency.
+
+## Hello CoAP!
+
+![](images/coap3.png)
+
+In the Connection-Oriented Universe, we have the MQTT protocol for transmitting TCP sensor messages to the IoT Server. What’s the equivalent for the Connectionless Universe that will allow us to transmit UDP sensor messages?
+
+_Answer_: __[Constrained Application Protocol, or CoAP](https://en.wikipedia.org/wiki/Constrained_Application_Protocol)__
+
+Why “Constrained”? Because CoAP was designed for low-power microcontrollers that don’t have easy access to power (like the crop sensors on Moon Base One). And CoAP requires little bandwidth… 120 bytes is all we need to send a sensor message to a CoAP server (like thethings.io)… Perfect for NB-IoT!
+
+![](images/coap-sheet1.png) <br> 
+[_Google Sheet for encoding CoAP messages_](https://docs.google.com/spreadsheets/d/1k72R9CWKxu8_AsQURA3iOtTTlE08Qks0gFcuBJZtTqo/edit?usp=sharing)
+
+I have prepared a [Google Sheet](https://docs.google.com/spreadsheets/d/1k72R9CWKxu8_AsQURA3iOtTTlE08Qks0gFcuBJZtTqo/edit?usp=sharing) that shows how a CoAP message is encoded for sending sensor data. 
+
+Click the sheet and make your own copy.  
+
+Let’s look at the three parts of a CoAP message…
+
+0️⃣ __CoAP Preamble__
+
+1️⃣ __CoAP Options__
+
+2️⃣ __CoAP Payload__
+
+## [0] CoAP Preamble
+
+![](images/coap-sheet2.png) <br>
+[CoAP Preamble](https://docs.google.com/spreadsheets/d/1k72R9CWKxu8_AsQURA3iOtTTlE08Qks0gFcuBJZtTqo/edit?usp=sharing)
+
+The Preamble appears at the start of every CoAP message. The important parts are…
+
+▶️ __Message Type__: `NON` is the recommended Message Type. `NON` messages don’t require any acknowledgement from the CoAP Server. So it’s highly efficient for transmitting sensor data and keeps the device firmware simple. If acknowledgement is desired (think very carefully!), select `CON` as the Message Type.
+
+▶️ __Method Code__: `POST` will transmit sensor data to thethings.io. `GET` will fetch the last transmitted sensor value. Yes, CoAP follows the same conventions as HTTP and REST.
+
+## [1] CoAP Options
+
+![](images/coap-sheet3.png) <br>
+[_CoAP Options_](https://docs.google.com/spreadsheets/d/1k72R9CWKxu8_AsQURA3iOtTTlE08Qks0gFcuBJZtTqo/edit?usp=sharing)
+
+After the Preamble, the Options section appears next. The Options will remind you of HTTP Headers…
+
+▶️ __URI Path__: This is similar to the URL for HTTP requests. For thethings.io, each Thing is identified by a URI like…
+v2/things/IVRiBCcR6HPp_CcZIFfOZFxz_izni5xc_KO-kgSA2Y8
+
+The last gibberish part (IVRi…) is the Thing Token in thethings.io. More about that later.
+
+▶️ __Content Format__: Here we tell the CoAP Server that our sensor data (the payload) is in JSON format
+
+▶️ __Accept__: Here we tell the CoAP Server that the response from the server should also be in JSON format (if we’re expecting a response)
+
+Note that Content Format and Accept fields each require only 1 byte 32 to specify the value `application/json`. Constrained and highly-efficient indeed!
+
+## [2] CoAP Payload
+
+![](images/coap-sheet4.png) <br>
+[_CoAP Payload_](https://docs.google.com/spreadsheets/d/1k72R9CWKxu8_AsQURA3iOtTTlE08Qks0gFcuBJZtTqo/edit?usp=sharing)
+
+Finally we have the Payload, which contains the sensor data. Here we use a JSON document to encode the sensor values `device=4BUXIW6W, 
+tmp=28.1`…
+
+thethings.io requires the device to transmit sensor values in the above format: an array of values, with key and value in each entry.
+
+thethings.io will look up the Thing that we have specified in the URI Options (`IVRi…`) and set the temperature `tmp` to `28.1`. 
+
+What’s `device`? This the random Device ID that uniquely identifies our Blue Pill, so that we may view the sensor data received by the server.
+
+How do we know where the Options end and where the Payload starts? Easy — just look for the End Of Options Marker `FF`. The CoAP format is so simple that it doesn’t need any fields to indicate the sizes of the Options and the Payload!
+
+![](images/coap-sheet5.png) <br>
+[_Encoded CoAP message_](https://docs.google.com/spreadsheets/d/1k72R9CWKxu8_AsQURA3iOtTTlE08Qks0gFcuBJZtTqo/edit?usp=sharing)
+
+In under 150 bytes we have created a UDP message that our device may transmit over NB-IoT to update the sensor data for our Thing at thethings.io. We’ll learn next how to send this packet with a simple AT command.
+
+For more details on CoAP, check the [CoAP specifications (RFC7252)](https://tools.ietf.org/html/rfc7252)
+
 # Quectel NB-IoT AT Commands
 
 We'll look at this [Blue Pill log](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/logs/visual.log) to understand the Quectel NB-IoT AT Commands sent by our Blue Pill to the Quectel BC95-G NB-IoT module...
@@ -457,7 +587,7 @@ First we reboot the Quectel module to start from a fresh, clean state…
 | AT Commands (in bold) | Remarks |
 | :--- | :--- |
 | | |
-|  `Boot: Unsigned` <br>   `Security B.. Verified` <br>   `Protocol A.. Verified` <br>   `Apps A...... Verified` <br>  ` ` <br>   `REBOOT_CAUSE_SECURITY_RESET_PIN` <br>   `Neul` <br>   `OK` <br> | When connected to our computer, the Quectel module shows `REBOOT_CAUSE_SECURITY_RESET_PIN`. This is normal |
+|  `Boot: Unsigned` <br>   `Security B.. Verified` <br>   `Protocol A.. Verified` <br>   `Apps A...... Verified` <br>  ` ` <br>   `REBOOT_CAUSE_SECURITY_RESET_PIN` <br>   `Neul` <br>   `OK` <br> | When connected to our computer, the Quectel module shows `REBOOT_CAUSE_SECURITY_RESET_PIN`. This is normal. <br><br> Ignore the `ERROR` message that may appear at the beginning. The Blue Pill program attempts a few retries until it gets the `OK` response. |
 | **`AT+NCONFIG=AUTOCONNECT,FALSE`** | Disable auto-connecting to the NB-IoT network upon restarting |
 | `OK` | This enables us to specify which NB-IoT Band to search, which should be faster |
 | **`AT+NRB`** | Reboot the module |
@@ -486,7 +616,7 @@ We are now ready to transmit. For the specific AT command for transmitting our m
 
 | AT Commands (in bold) | Remarks |
 | :--- | :--- |
-| **`AT+QREGSWT=2`** | Don't use Huawei IoT Server |
+| **`AT+QREGSWT=2`** | Don't use Huawei IoT Server. Note: This command has been moved to the above section |
 | `OK` | |
 | **`AT+NSOCR=DGRAM,17,0,1`** | Allocate a local network port. `DGRAM,17` means UDP, `0` means allocate a new port, `1` means allow receiving of messages from server |
 | `1` <br> `OK` | `1` is the local port allocated |
@@ -541,7 +671,13 @@ Here are some AT commands useful for troubleshooting…
 
 # Configuring the CoAP Server at thethings.io
 
-TODO
+Upon clicking the URL `https://blue-pill-geolocate.appspot.com/?device=5cfca8c…` that’s shown in the Blue Pill log, we’ll see a web page that displays the temperature received by the server at thethings.io.
+
+The server has converted the raw temperature into degrees Celsius. We convert the temperature at the server to conserve RAM and ROM on Blue Pill.
+
+![Display of sensor data received from our Blue Pill](images/sensor-web.png) <br>
+_Display of sensor data received from our Blue Pill_
+
 
 ![](images/thethingsio.png)
 
