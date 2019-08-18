@@ -22,13 +22,21 @@ Read the articles...
 
 ## Usage
 
-1. In the Visual Studio Code Explorer, create a new empty Rust source file like `lib.rs`
+1. In Visual Studio Code, Click `File → Open` to open any folder
 
-1. Edit the Rust file
+    ![Click File → Open](images/install1.png)
 
-1. Click `Visual Editor` at the top right of the editor
+1. In the `Explorer → (Folder Name)` pane at top left, create a new Rust source file, like `lib.rs`
+
+    ![Create a new Rust source file](images/install2.gif)
+
+1. Edit the Rust source file. Click `Visual Editor` at top right
+
+    ![Click Visual Editor](images/install3.png)
 
 1. When prompted to populate the visual program into the Rust source file, click `OK`
+
+    ![Click OK](images/install4.png)
 
 1. Click the Rust source file to see the generated Rust code. Save the file to save the visual program. Don't edit the Rust source file manually, always use the visual editor.
 
