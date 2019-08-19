@@ -168,7 +168,9 @@ To compile the generated Rust program into Blue Pill firmware...
 
     ![Open Workspace](images/open-workspace.png)
 
-1. Copy the Rust source file containing the generated code to `rust/app/src/lib.rs`. Overwrite the existing file.
+1. Copy your Visual Program source file to `stm32bluepill-mynewt-sensor/rust/app/src/lib.rs`. Overwrite the existing file.
+
+    ![](images/copy-visual-rust.png)
 
 1. Delete the files `app_network.rs` and `app_sensor.rs` in that folder
 
