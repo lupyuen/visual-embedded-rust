@@ -8,7 +8,7 @@ export function getHtml(para: any) {
 <head>
     <meta charset="utf-8">
     <meta name="google" value="notranslate">
-    <title>Visual Embedded Rust</title>
+    <title>Visual Rust for PineTime Smart Watch</title>
 
     <!--  Load Blockly Stylesheet and our override  -->
     <link rel="stylesheet" href="${para.blocklyUri}/demos/code/style.css">
