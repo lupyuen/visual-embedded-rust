@@ -138,6 +138,18 @@ export function getHtml(para: any) {
     <textarea id="content_xml" class="content" wrap="off"></textarea>
 
     <xml id="toolbox" style="display: none">
+    <!--  Begin: Widgets Category -->
+    <category name="Widgets" colour="160">
+      <block type="app"></block>
+      <block type="label"></block>
+      <block type="button"></block>
+    </category>
+    <!--  End  -->
+
+    <!--  Begin: Events Category -->
+    <category name="Events" colour="%{BKY_PROCEDURES_HUE}" custom="WIDGET"></category>
+    <!--  End  -->
+  
     <!--  Begin: Pins Category -->
     <category name="Pins" colour="330">
         <block type="digital_read_pin"></block>
