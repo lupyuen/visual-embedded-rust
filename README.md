@@ -1,10 +1,12 @@
-# visual-embedded-rust
+# TODO: visual-embedded-rust
 
 - Create and edit Embedded Rust programs visually by dragging and dropping blocks
 
-- Generates Embedded Rust code for [STM32 Blue Pill](https://medium.com/swlh/super-blue-pill-like-stm32-blue-pill-but-better-6d341d9347da?source=friends_link&sk=956087171b9b9efcc484ea60b9c78c16) with [Apache Mynewt](https://mynewt.apache.org/) realtime operating system
+- Work In Progress: Generates Embedded Rust code for PineTime Smart Watch with [Apache Mynewt](https://mynewt.apache.org/) realtime operating system
 
-# Features
+- Also generates Embedded Rust code for [STM32 Blue Pill](https://medium.com/swlh/super-blue-pill-like-stm32-blue-pill-but-better-6d341d9347da?source=friends_link&sk=956087171b9b9efcc484ea60b9c78c16) with [Apache Mynewt](https://mynewt.apache.org/) realtime operating system
+
+# TODO: Features
 
 Watch the demo...
 
@@ -24,7 +26,7 @@ Read the articles...
 
 ![Visual Embedded Rust](images/animation.gif)
 
-# Document Contents
+# TODO: Document Contents
 
 1. Usage
 
