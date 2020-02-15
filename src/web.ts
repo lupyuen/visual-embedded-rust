@@ -50,13 +50,16 @@ export function getHtml(para: any) {
     <!--  Load Rust Code Generator  -->
     <script nonce="${para.nonce}" src="${para.blocklyUri}/generators/rust.js"></script>
 
-    <!--  Load Mynewt Blocks  -->
+    <!--  Load Mynewt Blocks and Mynewt Block Code Generators  -->
     <script nonce="${para.nonce}" src="${para.blocklyUri}/generators/rust/mynewt_blocks.js"></script>
-    <script nonce="${para.nonce}" src="${para.blocklyUri}/generators/rust/mynewt_coap.js"></script>
-
-    <!--  Load Mynewt Block Code Generators  -->
     <script nonce="${para.nonce}" src="${para.blocklyUri}/generators/rust/mynewt_functions.js"></script>
-
+    <script nonce="${para.nonce}" src="${para.blocklyUri}/generators/rust/mynewt_coap.js"></script>
+    <script nonce="${para.nonce}" src="${para.blocklyUri}/generators/rust/app_blocks.js"></script>
+    <script nonce="${para.nonce}" src="${para.blocklyUri}/generators/rust/app_code.js"></script>
+    <script nonce="${para.nonce}" src="${para.blocklyUri}/generators/rust/widgets_code.js"></script>
+    <script nonce="${para.nonce}" src="${para.blocklyUri}/generators/rust/widgets_blocks.js"></script>
+    <script nonce="${para.nonce}" src="${para.blocklyUri}/generators/rust/widgets_category.js"></script>
+  
     <!--  Load Rust Functions. TODO: Package into rust_compressed.js  -->
     <script nonce="${para.nonce}" src="${para.blocklyUri}/generators/rust/colour.js"></script>
     <script nonce="${para.nonce}" src="${para.blocklyUri}/generators/rust/lists.js"></script>
