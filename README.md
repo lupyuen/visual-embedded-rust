@@ -1,12 +1,22 @@
-# TODO: visual-embedded-rust
+# visual-embedded-rust
 
 - Create and edit Embedded Rust programs visually by dragging and dropping blocks
 
-- Work In Progress: Generates Embedded Rust code for PineTime Smart Watch with [Apache Mynewt](https://mynewt.apache.org/) realtime operating system
+- Generates Embedded Rust code for PineTime Smart Watch with [Apache Mynewt](https://mynewt.apache.org/) realtime operating system
 
-- Also generates Embedded Rust code for [STM32 Blue Pill](https://medium.com/swlh/super-blue-pill-like-stm32-blue-pill-but-better-6d341d9347da?source=friends_link&sk=956087171b9b9efcc484ea60b9c78c16) with [Apache Mynewt](https://mynewt.apache.org/) realtime operating system
+# Features
 
-# TODO: Features
+# Usage
+
+# Build The Firmware
+
+# Flash The Firmware
+
+# Documentataion for Previous Version
+
+## OLD: Features
+
+- Generates Embedded Rust code for [STM32 Blue Pill](https://medium.com/swlh/super-blue-pill-like-stm32-blue-pill-but-better-6d341d9347da?source=friends_link&sk=956087171b9b9efcc484ea60b9c78c16) with [Apache Mynewt](https://mynewt.apache.org/) realtime operating system
 
 Watch the demo...
 
@@ -26,7 +36,7 @@ Read the articles...
 
 ![Visual Embedded Rust](images/animation.gif)
 
-# TODO: Document Contents
+## OLD: Document Contents
 
 1. Usage
 
@@ -74,7 +84,7 @@ Read the articles...
 
 1. Release Notes
 
-# Usage
+## OLD: Usage
 
 1. In Visual Studio Code, Click `File → Open` to open any folder
 
@@ -98,7 +108,7 @@ Read the articles...
 
 ![Visual Embedded Rust editor with generated Rust code](images/editor.png)
 
-# Build The Firmware
+## OLD: Build The Firmware
 
 To compile the generated Rust program into Blue Pill firmware...
 
@@ -201,7 +211,7 @@ To compile the generated Rust program into Blue Pill firmware...
     If any source files or configuration files are changed, rebuild the application by clicking <br>
     `Terminal → Run Task → [2] Build bluepill_my_sensor`
 
-# Connect The Hardware
+## OLD: Connect The Hardware
 
 | | |
 |:- |:- |
@@ -230,7 +240,7 @@ Both yellow jumpers on Blue Pill should be set to the 0 position, as shown in th
 | ![SIM partially exposed to show the unusual orientation](images/sim-slot.png) <br> _SIM partially exposed to show the unusual orientation_ | Note that we are powering the Quectel module with __5V from ST-Link instead of 3.3V from Blue Pill__. That’s because the module requires more power than Blue Pill can provide. (How did I find out? Because the module kept restarting when I powered it from Blue Pill.) <br><br> __Check the documentation for your Quectel breakout board to confirm that it supports 5V__. ([Mine does](http://rs.iotxx.com/uploads/doc/%E8%B0%B7%E9%9B%A8NB10x%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E%E4%B9%A6-V1.3.pdf)) <br><br> __Insert the NB-IoT SIM__ according to the orientation shown in the photo. (Yes the SIM notch faces outward, not inward). <br><br> _Remember: Always connect the antenna before powering up the NB-IoT module!_  <br><br> __If you’re using Windows:__ Make sure that the ST-Link Driver has been installed before connecting ST-Link to your computer
   | 
 
-# Flash The Firmware To Blue Pill
+## OLD: Flash The Firmware To Blue Pill
 
 ![Blue Pill and ST-Link connected to USB port](images/stlink.jpg)
 
@@ -246,7 +256,7 @@ Both yellow jumpers on Blue Pill should be set to the 0 position, as shown in th
 
     This flashes the firmware (containing our Visual Program) to Blue Pill. If it shows errors, [compare with this flash log](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/logs/load-application.log).
 
-# Run The Program
+## OLD: Run The Program
 
 1. Click `Debug → Start Debugging`
 
@@ -283,7 +293,7 @@ The server has converted the raw temperature into degrees Celsius. We convert th
 ![Display of sensor data received from our Blue Pill](images/sensor-web.png) <br>
 _Display of sensor data received from our Blue Pill_
 
-# Function 1: On Start
+## OLD: Function 1: On Start
 
 ![On Start](images/visual-program1.png)
 
@@ -323,7 +333,7 @@ That’s how we create a Visual Program… By arranging the blocks to compose a 
 
 ![Visual Embedded Rust](images/animation.gif)
 
-# Function 2: Start Sensor Listener
+## OLD: Function 2: Start Sensor Listener
 
 ![Start Sensor Listener](images/visual-program2.png)
 
@@ -367,7 +377,7 @@ After that, the operating system will automatically read the temperature sensor 
 
 [YouTube Video](https://youtu.be/ytGa-7q6sqY)
 
-# Function 3: Handle Sensor Data
+## OLD: Function 3: Handle Sensor Data
 
 ![Handle Sensor Data](images/visual-program3.png)
 
@@ -377,7 +387,7 @@ The function `handle_sensor_data` doesn’t seem to do much… why did we design
 
 `handle_sensor_data` could be extended to handle multiple sensors, aggregating the sensor data before transmitting. Or it could check for certain conditions and decide whether it should transmit the data. This program structure gives us the most room to expand for the future.
 
-# Function 4: Send Sensor Data
+## OLD: Function 4: Send Sensor Data
 
 ![Send Sensor Data](images/visual-program4.png)
 
@@ -418,300 +428,14 @@ This effectively tells the Rust Compiler: _“Yes I’m setting the variable `_p
 At the end of the function, we display a URL in the Blue Pill log that contains the Device ID. The URL looks like this: https://blue-pill-geolocate.appspot.com/?device=5cfca8c…
 We’ll click this URL to verify that the server has received our sensor data.
 
-# Rust Source Files
+## OLD: Rust Source Files
 
 | | |
 |:- |:- |
 | ![](images/rust-source-files.png) | The Rust source files are located in the `rust` folder… <br><br> `rust/app`: Rust application that polls the internal temperature sensor and transmits the sensor data over NB-IoT <br><br> If you’re using Visual Embedded Rust... <br><br> Overwrite the file `src/lib.rs` by your Visual Program source file <br><br> Delete `app_network.rs` and `app_sensor.rs` in the src folder. <br><br> Rebuild the application by clicking <br><br>  `Terminal → Run Task → [2] Build bluepill_my_sensor` <br><br> `rust/visual`: Sample Visual Embedded Rust program <br><br> `rust/mynewt`: Rust Safe Wrappers for Mynewt OS and libraries <br><br> `rust/macros`: Rust Procedural Macros for generating Safe Wrappers, inferring types and other utility macros like `strn!()` 
  |
 
-# Program Settings
-
-The program settings may be found in the file
-[targets/bluepill_my_sensor/syscfg.yml](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/nbiot/targets/bluepill_my_sensor/syscfg.yml)
-
-`COAP_HOST, COAP_PORT`: The program will send CoAP messages to this IP address and port number, which defaults to the CoAP server at thethings.io.
-Keep the default settings if you wish to view your sensor data at blue-pill-geolocate.appspot.com.
-Change the setting to use your own CoAP server instead of thethings.io
-
-`COAP_URI`: The CoAP message will be delivered to this URI at the CoAP server (which defaults to `coap.thethings.io`).
-
-Keep the default settings if you wish to view your sensor data at blue-pill-geolocate.appspot.com.
-
-For thethings.io, the last part `IVRi… `is the Thing Token. If you wish to send sensor data to your own Thing at thethings.io, replace the last part of the URI with your Thing Token.
-
-For the purpose of NB-IoT Education, I’ll allow you to transmit sensor data to the Thing Token IVRi… from my personal, paid thethings.io account. Which will forward the sensor data to `blue-pill-geolocate.appspot.com` for viewing.
-
-`NBIOT_BAND`: The program connects to this NB-IoT Frequency Band. The Frequency Band depends on your country and your NB-IoT network operator. Check with your NB-IoT network operator for the Frequency Band to use.
-
-# CoAP: Constrained Application Protocol
-
-_Note: The example below assumes that our device is transmiiting the temperature as a floaing-point value like `tmp: 28.9`. However our Visual Embedded Rust program transmits the temperature as a raw integer like `t: 1879`. Please do the necessary mental adjustments_
-
-## Are You Connected? Or Connectionless?
-
-![](images/coap1.png)
-
-How do we achieve “low cost, long battery life, and high connection density” with NB-IoT? Next time you attend a party, try this…
-
-Mingle around as many people as you can. Listen to what EVERYONE has to say.
-
-When a conversation gets boring, just move away without saying anything.
-
-Don’t feel obligated to continue any conversation. It’s your right to listen as much or as little as you want. You’re NOT committed to stay CONNECTED to any person at the party.
-
-Yes your friends will find you strangely anti-social. You will miss out on some great stories from your friends, but then again, they are probably repeating the same old stories.
-
-BUT you will learn lots more, from more people. And feel less drained.
-
-That’s the better way… the CONNECTIONLESS way!
-
-We have been using TCP (Transmission Control Protocol) since the beginning of the internet to connect our gadgets (HTTP and MQTT are two popular protocols based on TCP). However TCP is Connection-Oriented — when two devices are connected via TCP, they need to stay connected… or they will be penalised.
-
-If any packets are dropped (due to poor network coverage or congestion) or delayed, both devices will need to resynchronise their TCP windows by retransmitting their packets. Which may lead to severe problems like the MQTT Server congestion on Moon Base One!
-
-## The Connectionless Way: Change TCP to UDP
-
-In a Connectionless Network there’s no commitment to stay connected to any device: Just transmit or receive a message. And move on. (Like our Connectionless Party!)
-
-![](images/coap2.png)
-
-Instead of establishing a TCP connection, we transmit a UDP (User Datagram Protocol) packet without waiting for the acknowledgement. 
-
-But because they are Connectionless, UDP packets do not enjoy guaranteed delivery.
-
-Most UDP packets are delivered properly, but if any packets are dropped (due to poor network coverage or congestion), UDP devices don’t attempt to resynchronise and retransmit the lost packets.
-
-Isn’t it a serious problem when packets disappear in our IoT network? Well, do we really need to receive every single sensor reading? Instead of suffering a server failure or network congestion, could we compromise by dropping a couple of sensor messages? That’s how we achieve High Connection Density in NB-IoT!
-
-When we go Connectionless, our gadgets become a lot simpler to build… no messy sliding window protocols and waiting forever! Thus our NB-IoT gadgets are Low Cost, and enjoy Long Battery Life!
-
-💎 Many other things are switching to the simpler Connectionless way… 1️⃣ HTTP version 3 will switch from TCP to a UDP protocol named QUIC. Because it just works better on lossy mobile networks. 2️⃣ YouTube and many video streaming services are already running on RTSP based on UDP. It allows video quality to be negotiated in real time based on network conditions. 3️⃣ Most massively multiplayer games already use UDP to achieve lower latency.
-
-## Hello CoAP!
-
-![](images/coap3.png)
-
-In the Connection-Oriented Universe, we have the MQTT protocol for transmitting TCP sensor messages to the IoT Server. What’s the equivalent for the Connectionless Universe that will allow us to transmit UDP sensor messages?
-
-_Answer_: __[Constrained Application Protocol, or CoAP](https://en.wikipedia.org/wiki/Constrained_Application_Protocol)__
-
-Why “Constrained”? Because CoAP was designed for low-power microcontrollers that don’t have easy access to power (like the crop sensors on Moon Base One). And CoAP requires little bandwidth… 120 bytes is all we need to send a sensor message to a CoAP server (like thethings.io)… Perfect for NB-IoT!
-
-![](images/coap-sheet1.png) <br> 
-[_Google Sheet for encoding CoAP messages_](https://docs.google.com/spreadsheets/d/1k72R9CWKxu8_AsQURA3iOtTTlE08Qks0gFcuBJZtTqo/edit?usp=sharing)
-
-I have prepared a [Google Sheet](https://docs.google.com/spreadsheets/d/1k72R9CWKxu8_AsQURA3iOtTTlE08Qks0gFcuBJZtTqo/edit?usp=sharing) that shows how a CoAP message is encoded for sending sensor data. 
-
-Click the sheet and make your own copy.  
-
-Let’s look at the three parts of a CoAP message…
-
-0️⃣ __CoAP Preamble__
-
-1️⃣ __CoAP Options__
-
-2️⃣ __CoAP Payload__
-
-## [0] CoAP Preamble
-
-![](images/coap-sheet2.png) <br>
-[CoAP Preamble](https://docs.google.com/spreadsheets/d/1k72R9CWKxu8_AsQURA3iOtTTlE08Qks0gFcuBJZtTqo/edit?usp=sharing)
-
-The Preamble appears at the start of every CoAP message. The important parts are…
-
-▶️ __Message Type__: `NON` is the recommended Message Type. `NON` messages don’t require any acknowledgement from the CoAP Server. So it’s highly efficient for transmitting sensor data and keeps the device firmware simple. If acknowledgement is desired (think very carefully!), select `CON` as the Message Type.
-
-▶️ __Method Code__: `POST` will transmit sensor data to thethings.io. `GET` will fetch the last transmitted sensor value. Yes, CoAP follows the same conventions as HTTP and REST.
-
-## [1] CoAP Options
-
-![](images/coap-sheet3.png) <br>
-[_CoAP Options_](https://docs.google.com/spreadsheets/d/1k72R9CWKxu8_AsQURA3iOtTTlE08Qks0gFcuBJZtTqo/edit?usp=sharing)
-
-After the Preamble, the Options section appears next. The Options will remind you of HTTP Headers…
-
-▶️ __URI Path__: This is similar to the URL for HTTP requests. For thethings.io, each Thing is identified by a URI like…
-v2/things/IVRiBCcR6HPp_CcZIFfOZFxz_izni5xc_KO-kgSA2Y8
-
-The last gibberish part (IVRi…) is the Thing Token in thethings.io. More about that later.
-
-▶️ __Content Format__: Here we tell the CoAP Server that our sensor data (the payload) is in JSON format
-
-▶️ __Accept__: Here we tell the CoAP Server that the response from the server should also be in JSON format (if we’re expecting a response)
-
-Note that Content Format and Accept fields each require only 1 byte 32 to specify the value `application/json`. Constrained and highly-efficient indeed!
-
-## [2] CoAP Payload
-
-![](images/coap-sheet4.png) <br>
-[_CoAP Payload_](https://docs.google.com/spreadsheets/d/1k72R9CWKxu8_AsQURA3iOtTTlE08Qks0gFcuBJZtTqo/edit?usp=sharing)
-
-Finally we have the Payload, which contains the sensor data. Here we use a JSON document to encode the sensor values `device=4BUXIW6W, 
-tmp=28.1`…
-
-thethings.io requires the device to transmit sensor values in the above format: an array of values, with key and value in each entry.
-
-thethings.io will look up the Thing that we have specified in the URI Options (`IVRi…`) and set the temperature `tmp` to `28.1`. 
-
-What’s `device`? This the random Device ID that uniquely identifies our Blue Pill, so that we may view the sensor data received by the server.
-
-How do we know where the Options end and where the Payload starts? Easy — just look for the End Of Options Marker `FF`. The CoAP format is so simple that it doesn’t need any fields to indicate the sizes of the Options and the Payload!
-
-![](images/coap-sheet5.png) <br>
-[_Encoded CoAP message_](https://docs.google.com/spreadsheets/d/1k72R9CWKxu8_AsQURA3iOtTTlE08Qks0gFcuBJZtTqo/edit?usp=sharing)
-
-In under 150 bytes we have created a UDP message that our device may transmit over NB-IoT to update the sensor data for our Thing at thethings.io. We’ll learn next how to send this packet with a simple AT command.
-
-For more details on CoAP, check the [CoAP specifications (RFC7252)](https://tools.ietf.org/html/rfc7252)
-
-# Quectel NB-IoT AT Commands
-
-We'll look at this [Blue Pill log](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/logs/visual.log) to understand the Quectel NB-IoT AT Commands sent by our Blue Pill to the Quectel BC95-G NB-IoT module...
-
-Blue Pill connects to the Quectel module via the UART port at 9600 bps, 8 data bits, No parity bit, 1 stop bit.
-
-For every AT command sent, Blue Pill sends `CR` (`Ctrl-M` or `0x0d`) and `LF` (`Ctrl-J` or `0x0a`) at the end of each AT command.
-
-![](images/at-commands.png)
-
-## [0] Prepare to transmit
-
-First we reboot the Quectel module to start from a fresh, clean state…
-
-| AT Commands (in bold) | Remarks |
-| :--- | :--- |
-| | |
-|  `Boot: Unsigned` <br>   `Security B.. Verified` <br>   `Protocol A.. Verified` <br>   `Apps A...... Verified` <br>  ` ` <br>   `REBOOT_CAUSE_SECURITY_RESET_PIN` <br>   `Neul` <br>   `OK` <br> | When connected to our computer, the Quectel module shows `REBOOT_CAUSE_SECURITY_RESET_PIN`. This is normal. <br><br> Ignore the `ERROR` message that may appear at the beginning. The Blue Pill program attempts a few retries until it gets the `OK` response. |
-| **`AT+NCONFIG=AUTOCONNECT,FALSE`** | Disable auto-connecting to the NB-IoT network upon restarting |
-| `OK` | This enables us to specify which NB-IoT Band to search, which should be faster |
-| **`AT+NRB`** | Reboot the module |
-|  `REBOOTING` <br>   `-f-f�-f` <br>   `-f�` <br>   `Boot:Unsigned` <br>   `SecurityB..Verified` <br>   `ProtocolA..Verified` <br>   `AppsA......Verified` <br>   `REBOOT_CAUSE_APPLICATION_AT` <br>   `Neul` <br>   `OK` <br> | Module reboots |
-
-## [1] Attach to network
-
-After rebooting, we specify the network settings and attach to the NB-IoT network…
-
-| AT Commands (in bold) | Remarks |
-| :--- | :--- |
-| **`AT+NBAND=8`** | Select NB-IoT Band 8 |
-| `OK` | This is specific to your NB-IoT operator |
-| **`AT+CFUN=1`** | Enable full functionality |
-| `OK` | Now we may start attaching to the network |
-| **`AT+CGATT=1`** | Attach to the NB-IoT network |
-| `OK` | Attach operation begins |
-| **`AT+CEREG?`** | Are we registered to the NB-IoT network? |
-| `=+CEREG:0,1` <br> `OK` | `0,1` means we have been registered <br> `0,2` means we should wait a few seconds then recheck via `AT+CEREG?` |
-| **`AT+CGATT?`** | Are we attached to the NB-IoT network? |
-| `=+CGATT:1` <br> `OK` | `1` means we are attached to the NB-IoT network. Ready to transmit. |
-
-## [2] Transmit message
-
-We are now ready to transmit. For the specific AT command for transmitting our message, look in the [CoAP Message Encoder Google Sheet](https://docs.google.com/spreadsheets/d/1k72R9CWKxu8_AsQURA3iOtTTlE08Qks0gFcuBJZtTqo/edit?usp=sharing).
-
-| AT Commands (in bold) | Remarks |
-| :--- | :--- |
-| **`AT+QREGSWT=2`** | Don't use Huawei IoT Server. Note: This command has been moved to the above section |
-| `OK` | |
-| **`AT+NSOCR=DGRAM,17,0,1`** | Allocate a local network port. `DGRAM,17` means UDP, `0` means allocate a new port, `1` means allow receiving of messages from server |
-| `1` <br> `OK` | `1` is the local port allocated |
-| **`AT+NSOST=1,104.199.85.211,5683,147,`** _(data omitted)_ **`,100`**  | Transmit the CoAP UDP packet using local port `1` to server IP address `104.199.85.211`, server port `5683` with size `147` bytes and msg sequence `100`. Use the AT command from the Google Sheet |
-| `1,147` <br> `OK` | `1` is the local port |
-| | `147` is the number of bytes being transmitted |
-| `=+NSOSTR:1,100,1` | `1,100,1` means port `1`, msg sequence `100` was transmitted (`1`) |
-
-## [3] Receive response
-
-The CoAP Server at thethings.io returns a response to our message…
-
-| AT Commands (in bold) | Remarks |
-| :--- | :--- |
-| | |
-| `=+NSONMI:1,35` | `1,35` means port `1` has received a server response of `35` bytes |
-| **`AT+NSORF=1,35`** | Read the server response for port `1`, returning `35` bytes |
-| `1,104.199.85.211,5683,35,58410001` <br> `0000164A272AE239C132FF7B227374617` <br> `47573223A2263726561746564227D,0` <br> `OK` | Server response for port `1`, server IP address `104.199.85.211`, server port `5683` |
-| **`AT+NSOCL=1`** | Close port 1 |
-| `OK` | |
-
-We may use Wireshark to decode the above server response (which is another CoAP message)…
-
-```
-58 41 00 01 00 00 16 4A 27 2A E2 39 C1
-32 FF 7B 22 73 74 61 74 75 73 22 3A 22
-63 72 65 61 74 65 64 22 7D
-```
-
-See the section _“Advanced Topic: What’s Inside The CoAP Message?”_ in _“[Connect STM32 Blue Pill to ESP8266 with Apache Mynewt](https://medium.com/@ly.lee/connect-stm32-blue-pill-to-esp8266-with-apache-mynewt-7edceb9e3b8d)”_
-
-Insert a space between each byte before decoding with Wireshark. The decoded response from thethings.io should read…
-
-```
-{"status":"created"}
-```
-
-Which means that the Thing State has been successfully updated in thethings.io.
-
-## [4] Diagnostics
-
-Here are some AT commands useful for troubleshooting…
-
-| AT Commands (in bold) | Remarks |
-| :--- | :--- |
-| **`AT+CGPADDR`** | Display the IP address allocated by the network |
-| `=+CGPADDR:0,10.26.255.38` `OK` | IP address of the module |
-| **`AT+NUESTATS`** | Display the network statistics |
-|  `Signal power:-758` <br>   `Total power:-706` <br>   `TX power:230` <br>   `TX time:438` <br>   `RX time:16193` <br>   `Cell ID:3535136` <br>   `ECL:0` <br>   `SNR:132` <br>   `EARFCN:3518` <br>   `PCI:22` <br>   `RSRQ:-108` <br>   `OPERATOR MODE:4` <br>   `OK` <br>  | Network statistics of the module |
-
-[Read more about Quectel NB-IoT AT Commands](https://medium.com/@ly.lee/connect-stm32-blue-pill-to-nb-iot-with-quectel-bc95-g-and-apache-mynewt-c99a9d8417a9?source=friends_link&sk=34fb9befbea42e98cb5942d66f594027).
-
-# Configuring the CoAP Server at thethings.io
-
-Upon clicking the URL `https://blue-pill-geolocate.appspot.com/?device=5cfca8c…` that’s shown in the Blue Pill log, we’ll see a web page that displays the temperature received by the server at thethings.io.
-
-The server has converted the raw temperature into degrees Celsius. We convert the temperature at the server to conserve RAM and ROM on Blue Pill.
-
-The temperature data appears in a web page like this (it refreshes every 10 seconds)…
-
-![Display of sensor data received from our Blue Pill](images/sensor-web.png) <br>
-_Display of sensor data received from our Blue Pill_
-
-How did the sensor data get posted on a public website that’s outside thethings.io?
-
-That’s my demo server hosted at Google Cloud running AppEngine Go. Here's what just happened…
-
-1. Recall that the Program Settings in [targets/bluepill_my_sensor/syscfg.yml](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/nbiot/targets/bluepill_my_sensor/syscfg.yml) includes a `COAP_URI` setting
-
-1. The `COAP_URI` setting includes a Thing Token for thethings.io: `IVRiBC...`
-
-1. This Thing Token refers to a specific Thing in my thethings.io account. What sensor data are we sending to the Thing?
-
-1. We are sending the temperature data plus a `device` field. 
-
-    `device` is a random Device ID generated by our program. When my CoAP Server at thethings.io receives the `device` and `t` fields, it pushes the two values to my Google Cloud server, along with the computed floating-point temperature. (Yes it’s possible with thethings.io Cloud Code!)
-
-1. Then when you click the URL in the Blue Pill log...
-
-    `https://blue-pill-geolocate.appspot.com/?device=5cfca8c…` 
-
-    The Device ID appears inside the URL, so my Google Cloud server renders the computed temperature value associated with your Blue Pill. That’s the power of end-to-end IoT Integration with Quectel modules, NB-IoT, thethings.io and Google Cloud!
-
-    For the purpose of NB-IoT Education I’ll allow you to send CoAP messages to my (personal, paid, non-sponsored) account at thethings.io… because there’s no better way to learn CoAP!
-
-💎 If you wish to create your own free account for thethings.io, check the section [_“Configuring the CoAP Server at thethings.io”_ in this article](https://medium.com/@ly.lee/build-your-iot-sensor-network-stm32-blue-pill-nrf24l01-esp8266-apache-mynewt-thethings-io-ca7486523f5d). Copy your Thing Token to the `COAP_URI` setting.
-
-Open the Developer’s Console in thethings.io. Updates to the Thing State triggered by CoAP messages will be shown here.
-You will not longer be able to view the sensor data on my Google Cloud server, but you may follow the instructions in the above article to view your sensor data in thethings.io dashboards. 
-
-The integration code for thethings.io and Google Cloud is available at...
-
-github.com/lupyuen/thethingsio-wifi-geolocation
-
-github.com/lupyuen/gcloud-wifi-geolocation
-
-![](images/thethingsio.png) <br>
-_thethings.io Dashboard with Raw Temperature `t` and Computed Temperature `tmp`_
-
-# Typeless Rust
+## OLD: Typeless Rust
 
 To making coding easier for beginners, the extension generates [Typeless Rust code like this](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/rust/visual/src/lib.rs)...
 
@@ -777,78 +501,7 @@ _How the infer_type macro infers missing types, animated in Visual Studio Code w
 
 More details in the article [_"Advanced Topics for Visual Embedded Rust Programming"_](https://medium.com/@ly.lee/advanced-topics-for-visual-embedded-rust-programming-ebf1627fe397?source=friends_link&sk=01f0ae0e1b82efa9fd6b8e5616c736af)
 
-# How Small Is Rust?
-
-Here’s the RAM and ROM usage of the Visual Embedded Rust firmware on Blue Pill. The left section shows Rust and Apache Mynewt functions sorted by size (largest on top). The right section shows the total RAM and ROM used by each library.
-
-Our firmware occupies 55 KB of ROM and 13 KB of RAM, out of Blue Pill’s 64 KB ROM and 20 KB RAM. (That’s __86% of ROM__ and __65% of RAM__ used)
-
-[The spreadsheet below](https://docs.google.com/spreadsheets/d/1zIDfQmRcQ_wxGIPsq7MOxk7XzBO5-TL9R25TSFxaopU/edit#gid=381366828&fvid=1643056349) was generated based on the [Linker Memory Map](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/logs/my_sensor_app.elf.map) created during the firmware build. [Read more about memory maps](https://medium.com/@ly.lee/stm32-blue-pill-analyse-and-optimise-your-ram-and-rom-9fc805e16ed7)
-
-![RAM and ROM usage of the Visual Embedded Rust firmware](images/visual-rust-map.png) <br>
-_RAM and ROM usage of the Visual Embedded Rust firmware_
-
-# Why Blue Pill? Power vs Price Compromise
-
-| | |
-|:- |:- |
-| ![](images/blue-pill.png) <br> _STMicroelectronics STM32F103C8T6 microcontroller on Blue Pill_ | Blue Pill was chosen for the tutorial because it best represents a real-world, low-cost microcontroller with limited RAM and ROM. <br><br> The microcontroller is found in many off-the-shelf products, even [flying drones](https://timakro.de/blog/bare-metal-stm32-programming/)! <br><br> To be clear what’s a “Blue Pill”… The heart of Blue Pill is an STMicroelectronics __STM32F103C8T6__ microcontroller. <br><br> That’s a tiny module surface-mounted on a Blue printed-circuit board (hence the name Blue Pill). Without the Blue (and Yellow) parts, it would be extremely difficult for us to experiment with the microcontroller. So we buy a Blue Pill and use it like an Arduino. |
-
-| | |
-|:- |:- |
-| ![](images/blue-pill-inside.jpg) | Thus Blue Pill is clearly a Developer Kit that marks up the cost of the microcontroller. Blue Pill retails for $2, but the STM32F103C8T6 microcontroller [sells for only 40 cents](https://s.taobao.com/search?ie=utf8&initiative_id=staobaoz_20190817&stats_click=search_radio_all%3A1&js=1&imgfile=&q=stm32f103c8t6%E8%8A%AF%E7%89%87&suggest=0_1&_input_charset=utf-8&wq=STM32F103C8T6&suggest_query=STM32F103C8T6&source=suggest)! _Perfect for creating millions and millions of IoT sensors!_ <br><br> _(Actually a $2 dev kit is so affordable that it begs you to go ahead and do [many](https://www.linkedin.com/posts/lupyuen_nbiot-stm32-quectel-activity-6562722168394878976-0ld5) [many](https://www.linkedin.com/posts/lupyuen_stm32-quectel-nbiot-activity-6558570814986387456-ajVF) crazy things with it!)_ <br><br> At this price we get a 32-bit Arm processor with many goodies (GPIO, UART, I2C, SPI, USB, …) But the catch: It has only __64 KB of ROM and 20 KB of RAM.__ _([Similar to the Apple II](https://en.wikipedia.org/wiki/Apple_II_Plus)!)_ <br><br> With Blue Pill’s extremely limited RAM and ROM, we can’t code in decent programming languages like MicroPython and JavaScript (for MakeCode, which I tried and failed). <br><br> C was the only option… Until Rust came along! Rust is a systems programming language that’s as low level as C (i.e. no garbage collection). Yet it solves the painful pointer problem in C. |
-
-[This research paper presents an excellent comparison of C with Rust](https://mssun.me/assets/ares19securing.pdf)
-
-[Read more about Blue Pill and the upgraded version, Super Blue Pill](https://medium.com/swlh/super-blue-pill-like-stm32-blue-pill-but-better-6d341d9347da)
-
-# Why Apache Mynewt? Evolution of Rust on Bare Metal
-
-Why are we running the Apache Mynewt realtime operating system on Blue Pill together with Rust? Mynewt was built with C (and therefore susceptible to C defects)… _Why not run Rust on Blue Pill without C?_
-
-This means we would be running Rust on __“Bare Metal”__, without any other operating system. In fact, Rust becomes the operating system. Rust would have to handle GPIO, UART, I2C, SPI, USB, … Plus multitasking and related functions like semaphores and messages queues.
-
-Why reinvent the Rusty wheel when we already have realtime operating systems like Mynewt, FreeRTOS, Zephyr, …? It takes a lot of effort to build a new realtime operating system in Rust that supports all kinds of microcontrollers.
-
-There’s a great team hard at work creating the [Embedded Rust platform](https://rust-embedded.github.io/book/intro/index.html). In the meantime, I’m taking a shortcut and using Mynewt… But in a safe way, with __Safe Wrappers__.
-
-I’m not solving the problem of devices crashing due to bugs in the operating system… Because I trust experienced C coders in the Mynewt community for creating high-quality kernel code. Instead I’m solving the problem of devices crashing due to bugs in the C application code… And experienced C application coders are really hard to find.
-
-Can we solve this problem with Rust?
-
-# How Safe Is Rust? Safe Wrappers for Mynewt
-
-Rust won’t let us use pointers freely like in C (unless we explicitly write `unsafe` code). Mynewt however is written in C and it will blindly accept any pointer we pass, even bad ones. How shall we reconcile the two?
-
-The solution: Create __Safe Wrappers__ that validate all pointers passed from Rust to Mynewt and vice versa. A Safe Wrapper is a Rust function that wraps around the Mynewt API, converting the unsafe Mynewt API into a safe Rust API.
-
-For example: When a Mynewt API accepts a string input (`const char *`), we wrap the API with a Rust function that accepts a `Strn` type instead.
-
-`Strn` is a type I created that represents a null-terminated string. Unlike C, Rust strings are not expected to be terminated by the null byte. So when we pass strings to the Safe Wrapper as `Strn`, the wrapper verifies that the string is indeed terminated by a null.
-
-When Mynewt returns a string, the Safe Wrapper also uses the `Strn` type to verify that the returned string is properly terminated by null.
-
-Read more about Mynewt Safe Wrappers in the section _“[Advanced Topic: Safe Wrappers for Mynewt](https://medium.com/@ly.lee/rust-rocks-nb-iot-stm32-blue-pill-with-quectel-bc95-g-on-apache-mynewt-ef62a7e28f7e)”_
-
-[Read this excellent paper that compares Unsafe Coding in C with Safe Coding in Rust](https://mssun.me/assets/ares19securing.pdf)
-
-# What’s Wrong With Rust? Types!
-
-In C we would manipulate a string as `char *`. In Rust it weirdly becomes `&'static Strn`… a reference to a static null-terminated string. (`Strn` is my own helper type for embedded platforms.) Yes Rust is 100% precise in describing types… perhaps too precise?
-
-Many Rust learners struggle with Rust Types _(I’m still struggling)_. The Rust Compiler helpfully suggests how to fix coding issues with types. If the Rust Compiler is really so smart, why not go all the way and __fix the types for us?__
-
-Thus Visual Embedded Rust becomes an experiment in “__Typeless Rust__”. Visual Coding doesn’t give us much room to express precise types in our Visual Programs. (How would you visually represent a _reference to a static null-terminated string?_) And if Visual Rust is meant for beginners, maybe we shouldn’t even mention types, to flatten the Rust learning curve.
-
-Rust Learners shall stroll up the Rust learning slope starting with…
-
-1. __Visual Rust,__ devoid of types, followed by…
-
-1. __Typeless Rust,__ the typeless code generated by Visual Rust, and finally…
-
-1. __Fully-Typed Rust,__ a.k.a. Rust 2018
-
-# Inside The Visual Embedded Rust Extension for Visual Studio Code
+## OLD: Inside The Visual Embedded Rust Extension for Visual Studio Code
 
 The source code for the Visual Embedded Rust extension is located at github.com/lupyuen/visual-embedded-rust
 
@@ -909,7 +562,7 @@ _Logic Flow in the Visual Embedded Rust Extension_
 
     The Rust Code Generator for Blockly is [explained in this article](https://medium.com/@ly.lee/visual-programming-with-embedded-rust-yes-we-can-with-apache-mynewt-and-google-blockly-8b67ef7412d7)
 
-# Building The Visual Embedded Rust Extension
+## OLD: Building The Visual Embedded Rust Extension
 
 To build the extension, two repositories need to be cloned into the media folder: [`blockly-mynewt-rust`](https://github.com/lupyuen/blockly-mynewt-rust) and [`closure-library`](https://github.com/google/closure-library):
 
@@ -919,7 +572,7 @@ git clone https://github.com/lupyuen/blockly-mynewt-rust
 git clone https://github.com/google/closure-library
 ```
 
-# References
+## OLD: References
 
 The following files may be useful for reference…
 
@@ -933,8 +586,7 @@ The following files may be useful for reference…
 
 [Read more about hosting Rust applications on Mynewt](https://medium.com/@ly.lee/hosting-embedded-rust-apps-on-apache-mynewt-with-stm32-blue-pill-c86b119fe5f?source=friends_link&sk=f58f4cf6c608fded4b354063e474a93b)
 
-
-# Release Notes
+## OLD: Release Notes
 
 For changelog refer to...
 
