@@ -4,9 +4,79 @@
 
 - Generates Embedded Rust code for PineTime Smart Watch with [Apache Mynewt](https://mynewt.apache.org/) realtime operating system
 
-# Features
-
 # Usage
+
+1. Install `rustup` with support for nightly target `thumbv7em-none-eabihf`. 
+   
+   Follow the instructions at https://rustup.rs/
+   
+   Then execute...
+
+   ```bash
+   rustup default nightly
+   rustup update
+   rustup target add thumbv7em-none-eabihf
+   ```
+
+1. Install Arm toolchain `gcc-arm-none-eabi` and the `newt` build tool for Mynewt.  Refer to this script...
+
+    [`scripts/install-pi.sh`](scripts/install-pi.sh)
+
+1. Clone this repository...
+
+   ```bash
+   git clone --recursive https://github.com/lupyuen/pinetime-rust-mynewt
+   ```
+
+1. [`repos`](repos) folder should contain the Mynewt source code. If your `repos` folder is empty, install the Mynewt source code with the `newt install` command:
+
+    ```bash
+    cd pinetime-rust-mynewt
+    newt install
+    ```
+
+    Ignore the error `Error: Error updating "mcuboot"`
+
+1. Build the bootloader...
+
+    ```bash
+    cd pinetime-rust-mynewt
+    scripts/nrf52/build-boot.sh
+    ```
+
+1. Build the application...
+
+    ```bash
+    scripts/build-app.sh
+    ```
+
+    If you see the error `Undefined main`, run `scripts/build-app.sh` again. It should fix the error.
+
+1. Create the application firmware image...
+
+    ```bash
+    scripts/nrf52/image-app.sh
+    ```
+
+1. Flash the bootloader...
+
+    ```bash
+    scripts/nrf52-pi/flash-boot.sh
+    ```
+
+1. Flash the application and run it...
+
+    ```bash
+    scripts/nrf52-pi/flash-app.sh
+    ```
+    
+1. You may need to edit the scripts to set the right path of OpenOCD. 
+
+   Also for Windows, the ST-Link interface for OpenOCD is `stlink-v2.cfg` instead of `stlink.cfg`.
+
+1. Check this article in case of problems...
+
+    [_Build and Flash Rust+Mynewt Firmware for PineTime Smart Watch_](https://medium.com/@ly.lee/build-and-flash-rust-mynewt-firmware-for-pinetime-smart-watch-5e14259c55?source=friends_link&sk=150b2a73b84144e5ef25b985e65aebe9)
 
 # Build The Firmware
 
