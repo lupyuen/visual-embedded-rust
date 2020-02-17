@@ -6,6 +6,12 @@
 
 # Usage
 
+Pi: https://github.com/lupyuen/pinetime-rust-mynewt/releases/tag/v3.0.3
+
+macOS: https://github.com/lupyuen/pinetime-rust-mynewt/releases/tag/v3.0.2
+
+Windows: https://github.com/lupyuen/pinetime-rust-mynewt/releases/tag/v3.0.1
+
 1. Install `rustup` with support for nightly target `thumbv7em-none-eabihf`. 
    
    Follow the instructions at https://rustup.rs/
