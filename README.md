@@ -2,7 +2,7 @@
 
 - Create and edit Embedded Rust programs visually by dragging and dropping blocks
 
-- Generates Embedded Rust code for PineTime Smart Watch with [Apache Mynewt](https://mynewt.apache.org/) realtime operating system
+- Generates Embedded Rust firmware code for PineTime Smart Watch hosted on [Apache Mynewt](https://mynewt.apache.org/) realtime operating system
 
 # Connect PineTime to Raspberry Pi
 
@@ -126,6 +126,119 @@ scripts/nrf52-pi/flash-unprotect.sh
 PineTime’s demo firmware has been erased and the flash protection has been removed.
 
 🛈 [_What is OpenOCD? Why Raspberry Pi and not ROCK64 or Nvidia Jetson Nano? Read this_](https://gist.github.com/lupyuen/18e66c3e81e11050a10d1192c5b84bb0)
+
+# Flash Bootloader and Application to PineTime
+
+We’re now ready to flash our own firmware to PineTime! We’ll be flashing the PineTime firmware that’s based on open-source [__Apache Mynewt embedded operating system__](https://mynewt.apache.org/). Mynewt OS contains two components that we shall flash to PineTime…
+
+__Mynewt Bootloader__: This is the C code that’s run whenever we power on PineTime. The Bootloader executes the Mynewt Application upon startup.
+
+__Mynewt Application__: Contains a Rust application that controls the PineTime functions, and low-level system functions written in C.
+
+The Bootloader and Application firmware image files may be found at these locations…
+
+| Mynewt Component          | Flash Memory Address      | Location of Firmware Image  |
+| :---               | :---              | :---        |
+| Bootloader           | `0x0`  | `~/pinetime-rust-mynewt/bin/targets/nrf52_boot/app/apps/boot_stub/boot_stub.elf.bin` |
+| Application          | `0x8000`  | `~/pinetime-rust-mynewt/bin/targets/nrf52_my_sensor/app/apps/my_sensor_app/my_sensor_app.img` |
+
+_From https://github.com/lupyuen/pinetime-rust-mynewt/blob/master/hw/bsp/nrf52/bsp.yml_
+
+🛈 [_What is a Bootloader? Read this_](https://gist.github.com/lupyuen/93ba71e0ae5e746e7a68e4513e0a54d8)
+
+1️⃣ To flash Mynewt Bootloader to PineTime, enter the following at the command prompt…
+
+```bash
+# Flash Mynewt Bootloader to PineTime
+cd ~/pinetime-rust-mynewt
+scripts/nrf52-pi/flash-boot.sh
+```
+
+2️⃣ We should see `Done`…
+
+```
+Flashing Bootloader...
+target halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x000000d8 msp: 0x20010000
+Enabled ARM Semihosting to show debug output
+** Programming Started **
+Info : nRF52832-QFAA(build code: E1) 512kB Flash, 64kB RAM
+Warn : Adding extra erase range, 0x00000b78 .. 0x00000fff
+** Programming Finished **
+** Verify Started **
+** Verified OK **
+
+Restarting...
+target halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x000000d8 msp: 0x20010000, semihosting
+
+**** Done!
+```
+
+_From https://github.com/lupyuen/pinetime-rust-mynewt/blob/master/logs/load-bootloader-pi.log_
+
+3️⃣ To flash Mynewt Application to PineTime, enter the following at the command prompt…
+
+```bash
+# Flash Rust+Mynewt Application to PineTime
+cd ~/pinetime-rust-mynewt
+scripts/nrf52-pi/flash-app.sh
+```
+
+4️⃣ We should see `Done! Press Ctrl-C To Exit`…
+
+```
+Flashing Application...
+target halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x000000d8 msp: 0x20010000
+Enabled ARM Semihosting to show debug output
+** Programming Started **
+Info : nRF52832-QFAA(build code: E1) 512kB Flash, 64kB RAM
+Warn : Adding extra erase range, 0x0003e820 .. 0x0003efff
+** Programming Finished **
+** Verify Started **
+** Verified OK **
+
+Restarting...
+target halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x000000d8 msp: 0x20010000, semihosting
+Enabled ARM Semihosting to show debug output
+
+**** Done! Press Ctrl-C to exit...
+```
+
+_From https://github.com/lupyuen/pinetime-rust-mynewt/blob/master/logs/load-application-pi.log_
+
+5️⃣ The new PineTime firmware runs after the flashing has been completed. Here are the debugging messages produced by our Rust application…
+
+```
+Info : Listening on port 6666 for tcl connections
+Info : Listening on port 4444 for telnet connections
+TMP create temp_stub_0
+NET hwid 4a f8 cf 95 6a be c1 f6 89 ba 12 1a 
+NET standalone node 
+Rust test display
+```
+
+_From https://github.com/lupyuen/pinetime-rust-mynewt/blob/master/logs/load-application-pi.log_
+
+6️⃣ And we should see some text and graphics on the PineTime screen
+
+7️⃣ Press `Ctrl-C` to stop the display of debugging messages.
+
+We have flashed a simple Rust application located at [`pinetime-rust-mynewt/rust/app/src/display.rs`](https://github.com/lupyuen/pinetime-rust-mynewt/blob/master/rust/app/src/display.rs) that renders some graphics and text to the PineTime display
+
+[Here’s a good introduction to Rust programming](https://doc.rust-lang.org/book/title-page.html) and [here’s a good overview of Rust](https://doc.rust-lang.org/rust-by-example/)
+
+How do we modify this Rust application and rebuild the firmware? We have 3 options:
+
+[Option 1] Build the firmware on a Windows computer, and copy to Pi for flashing
+
+[Option 2] Build the firmware on a macOS computer, and copy to Pi for flashing
+
+[Option 3] Build the firmware on a (powerful) Raspberry Pi (or PineBook Pro) and flash directly
+
+# TODO
 
 Pi: https://github.com/lupyuen/pinetime-rust-mynewt/releases/tag/v3.0.3
 
