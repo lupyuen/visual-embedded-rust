@@ -127,6 +127,97 @@ PineTime’s demo firmware has been erased and the flash protection has been rem
 
 🛈 [_What is OpenOCD? Why Raspberry Pi and not ROCK64 or Nvidia Jetson Nano? Read this_](https://gist.github.com/lupyuen/18e66c3e81e11050a10d1192c5b84bb0)
 
+# Edit The Visual Rust Application
+
+We shall be using VSCode with the Visual Embedded Rust Extension to edit our Visual Rust application graphically.
+
+🛈 [_What is VSCode? Is it related to Visual Studio? How is Microsoft involved? Read this_](https://gist.github.com/lupyuen/08e383845d68d3337747e8eb59d0f624)
+
+1️⃣ Launch VSCode by clicking the Raspberry Pi Menu (top left corner) → Programming → Code OSS Headmelted
+
+In VSCode, click `File → Open Folder`
+
+Under `Home`, select the folder `pinetime-rust-mynewt` and click OK
+
+When prompted to open the workspace, click Open Workspace
+
+When prompted to install Extension Recommendations, click `Install All`
+
+Ignore the message `Unable To Watch For File Changes`. Close the message when it appears.
+
+2️⃣ Install the `Visual Embedded Rust` Extension...
+
+Click `View → Extensions`
+
+Search for `Visual Embedded Rust`
+
+Install the extension
+
+3️⃣ Enable the Visual Rust application...
+
+Browse to `rust/app/Cargo.toml`
+
+Modify the file such that `visual_app` is uncommented and the other options are commented out...
+
+```yaml
+default =  [          # Select the conditional compiled features
+    # "display_app",  # Disable graphics display app
+    # "ui_app",       # Disable druid UI app
+    "visual_app",     # Enable Visual Rust app
+    # "use_float",    # Disable floating-point for GPS geolocation
+]
+```
+
+4️⃣ Edit the Visual Rust application...
+
+Browse to `rust/app/src/visual.rs`
+
+Click `Visual Editor` at top right
+
+![Click Visual Editor](images/install3.png)
+
+Use the Visual Editor to edit the Visual Rust application
+
+5️⃣ After editing, save the `visual.rs` source file to save the visual program. Don't edit the Rust source file manually, always use the Visual Editor.
+
+# Build The Visual Rust Application
+
+1️⃣ At the lower left corner, there is a panel Task Runner. Click the panel to display the build and flash tasks.
+
+2️⃣ In the Task Runner, click `[1] Build Bootloader`
+
+When the Terminal Panel appears, right-click the `Terminal` tab, select `Move Panel Right`
+
+After the building the Bootloader, we should see `Done`
+
+Ignore the message `There Are Task Errors`
+
+🛈 [_What is a Bootloader? Read this_](https://gist.github.com/lupyuen/93ba71e0ae5e746e7a68e4513e0a54d8)
+
+3️⃣ In the Task Runner, click `[2] Build Application`
+
+After the building the Application, we should see `Done`
+
+If you see the message `Undefined Reference To Main`, click `[2] Build Application` again and it should succeed.
+
+4️⃣ In the Task Runner, click `[3] Image Application`
+
+After the creating the Firmware Image, we should see `Done`
+
+5️⃣ In the Task Runner, click `[4] Flash Bootloader`
+
+After flashing the Bootloader Firmware to PineTime, we should see `Done`
+
+The Bootloader only needs to be flashed once.
+
+6️⃣ In the Task Runner, click `[5] Flash Application`
+
+After the flashing the Application Firmware to PineTime, we should see `Done`…
+
+7️⃣ Our Visual Rust application starts running on PineTime
+
+8️⃣ Click the Trash icon 🗑 near the top right to terminate the application. If we click the Close icon ❌ instead of the Trash icon, the next flash or debug command will fail.
+
 # Flash Bootloader and Application to PineTime
 
 We’re now ready to flash our own firmware to PineTime! We’ll be flashing the PineTime firmware that’s based on open-source [__Apache Mynewt embedded operating system__](https://mynewt.apache.org/). Mynewt OS contains two components that we shall flash to PineTime…
@@ -238,13 +329,16 @@ How do we modify this Rust application and rebuild the firmware? We have 3 optio
 
 [Option 3] Build the firmware on a (powerful) Raspberry Pi (or PineBook Pro) and flash directly
 
+
+
+
 # TODO
 
-Pi: https://github.com/lupyuen/pinetime-rust-mynewt/releases/tag/v3.0.3
+Pi Version: https://github.com/lupyuen/pinetime-rust-mynewt/releases/tag/v3.0.3
 
-macOS: https://github.com/lupyuen/pinetime-rust-mynewt/releases/tag/v3.0.2
+macOS Version: https://github.com/lupyuen/pinetime-rust-mynewt/releases/tag/v3.0.2
 
-Windows: https://github.com/lupyuen/pinetime-rust-mynewt/releases/tag/v3.0.1
+Windows Version: https://github.com/lupyuen/pinetime-rust-mynewt/releases/tag/v3.0.1
 
 1. Install `rustup` with support for nightly target `thumbv7em-none-eabihf`. 
    
@@ -318,13 +412,12 @@ Windows: https://github.com/lupyuen/pinetime-rust-mynewt/releases/tag/v3.0.1
 
     [_Build and Flash Rust+Mynewt Firmware for PineTime Smart Watch_](https://medium.com/@ly.lee/build-and-flash-rust-mynewt-firmware-for-pinetime-smart-watch-5e14259c55?source=friends_link&sk=150b2a73b84144e5ef25b985e65aebe9)
 
-# Build The Firmware
-
-# Flash The Firmware
 
 # Documentataion for Previous Version
 
-## OLD: Features
+The documentation below is being updated
+
+## OBSOLETE: Features
 
 - Generates Embedded Rust code for [STM32 Blue Pill](https://medium.com/swlh/super-blue-pill-like-stm32-blue-pill-but-better-6d341d9347da?source=friends_link&sk=956087171b9b9efcc484ea60b9c78c16) with [Apache Mynewt](https://mynewt.apache.org/) realtime operating system
 
@@ -346,7 +439,7 @@ Read the articles...
 
 ![Visual Embedded Rust](images/animation.gif)
 
-## OLD: Document Contents
+## OBSOLETE: Document Contents
 
 1. Usage
 
@@ -394,7 +487,7 @@ Read the articles...
 
 1. Release Notes
 
-## OLD: Usage
+## OBSOLETE: Usage
 
 1. In Visual Studio Code, Click `File → Open` to open any folder
 
@@ -418,7 +511,7 @@ Read the articles...
 
 ![Visual Embedded Rust editor with generated Rust code](images/editor.png)
 
-## OLD: Build The Firmware
+## OBSOLETE: Build The Firmware
 
 To compile the generated Rust program into Blue Pill firmware...
 
@@ -521,7 +614,7 @@ To compile the generated Rust program into Blue Pill firmware...
     If any source files or configuration files are changed, rebuild the application by clicking <br>
     `Terminal → Run Task → [2] Build bluepill_my_sensor`
 
-## OLD: Connect The Hardware
+## OBSOLETE: Connect The Hardware
 
 | | |
 |:- |:- |
@@ -550,7 +643,7 @@ Both yellow jumpers on Blue Pill should be set to the 0 position, as shown in th
 | ![SIM partially exposed to show the unusual orientation](images/sim-slot.png) <br> _SIM partially exposed to show the unusual orientation_ | Note that we are powering the Quectel module with __5V from ST-Link instead of 3.3V from Blue Pill__. That’s because the module requires more power than Blue Pill can provide. (How did I find out? Because the module kept restarting when I powered it from Blue Pill.) <br><br> __Check the documentation for your Quectel breakout board to confirm that it supports 5V__. ([Mine does](http://rs.iotxx.com/uploads/doc/%E8%B0%B7%E9%9B%A8NB10x%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E%E4%B9%A6-V1.3.pdf)) <br><br> __Insert the NB-IoT SIM__ according to the orientation shown in the photo. (Yes the SIM notch faces outward, not inward). <br><br> _Remember: Always connect the antenna before powering up the NB-IoT module!_  <br><br> __If you’re using Windows:__ Make sure that the ST-Link Driver has been installed before connecting ST-Link to your computer
   | 
 
-## OLD: Flash The Firmware To Blue Pill
+## OBSOLETE: Flash The Firmware To Blue Pill
 
 ![Blue Pill and ST-Link connected to USB port](images/stlink.jpg)
 
@@ -566,7 +659,7 @@ Both yellow jumpers on Blue Pill should be set to the 0 position, as shown in th
 
     This flashes the firmware (containing our Visual Program) to Blue Pill. If it shows errors, [compare with this flash log](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/logs/load-application.log).
 
-## OLD: Run The Program
+## OBSOLETE: Run The Program
 
 1. Click `Debug → Start Debugging`
 
@@ -603,7 +696,7 @@ The server has converted the raw temperature into degrees Celsius. We convert th
 ![Display of sensor data received from our Blue Pill](images/sensor-web.png) <br>
 _Display of sensor data received from our Blue Pill_
 
-## OLD: Function 1: On Start
+## OBSOLETE: Function 1: On Start
 
 ![On Start](images/visual-program1.png)
 
@@ -643,7 +736,7 @@ That’s how we create a Visual Program… By arranging the blocks to compose a 
 
 ![Visual Embedded Rust](images/animation.gif)
 
-## OLD: Function 2: Start Sensor Listener
+## OBSOLETE: Function 2: Start Sensor Listener
 
 ![Start Sensor Listener](images/visual-program2.png)
 
@@ -687,7 +780,7 @@ After that, the operating system will automatically read the temperature sensor 
 
 [YouTube Video](https://youtu.be/ytGa-7q6sqY)
 
-## OLD: Function 3: Handle Sensor Data
+## OBSOLETE: Function 3: Handle Sensor Data
 
 ![Handle Sensor Data](images/visual-program3.png)
 
@@ -697,7 +790,7 @@ The function `handle_sensor_data` doesn’t seem to do much… why did we design
 
 `handle_sensor_data` could be extended to handle multiple sensors, aggregating the sensor data before transmitting. Or it could check for certain conditions and decide whether it should transmit the data. This program structure gives us the most room to expand for the future.
 
-## OLD: Function 4: Send Sensor Data
+## OBSOLETE: Function 4: Send Sensor Data
 
 ![Send Sensor Data](images/visual-program4.png)
 
@@ -738,14 +831,14 @@ This effectively tells the Rust Compiler: _“Yes I’m setting the variable `_p
 At the end of the function, we display a URL in the Blue Pill log that contains the Device ID. The URL looks like this: https://blue-pill-geolocate.appspot.com/?device=5cfca8c…
 We’ll click this URL to verify that the server has received our sensor data.
 
-## OLD: Rust Source Files
+## OBSOLETE: Rust Source Files
 
 | | |
 |:- |:- |
 | ![](images/rust-source-files.png) | The Rust source files are located in the `rust` folder… <br><br> `rust/app`: Rust application that polls the internal temperature sensor and transmits the sensor data over NB-IoT <br><br> If you’re using Visual Embedded Rust... <br><br> Overwrite the file `src/lib.rs` by your Visual Program source file <br><br> Delete `app_network.rs` and `app_sensor.rs` in the src folder. <br><br> Rebuild the application by clicking <br><br>  `Terminal → Run Task → [2] Build bluepill_my_sensor` <br><br> `rust/visual`: Sample Visual Embedded Rust program <br><br> `rust/mynewt`: Rust Safe Wrappers for Mynewt OS and libraries <br><br> `rust/macros`: Rust Procedural Macros for generating Safe Wrappers, inferring types and other utility macros like `strn!()` 
  |
 
-## OLD: Typeless Rust
+## OBSOLETE: Typeless Rust
 
 To making coding easier for beginners, the extension generates [Typeless Rust code like this](https://github.com/lupyuen/stm32bluepill-mynewt-sensor/blob/rust-nbiot/rust/visual/src/lib.rs)...
 
@@ -811,7 +904,7 @@ _How the infer_type macro infers missing types, animated in Visual Studio Code w
 
 More details in the article [_"Advanced Topics for Visual Embedded Rust Programming"_](https://medium.com/@ly.lee/advanced-topics-for-visual-embedded-rust-programming-ebf1627fe397?source=friends_link&sk=01f0ae0e1b82efa9fd6b8e5616c736af)
 
-## OLD: Inside The Visual Embedded Rust Extension for Visual Studio Code
+## OBSOLETE: Inside The Visual Embedded Rust Extension for Visual Studio Code
 
 The source code for the Visual Embedded Rust extension is located at github.com/lupyuen/visual-embedded-rust
 
@@ -872,7 +965,7 @@ _Logic Flow in the Visual Embedded Rust Extension_
 
     The Rust Code Generator for Blockly is [explained in this article](https://medium.com/@ly.lee/visual-programming-with-embedded-rust-yes-we-can-with-apache-mynewt-and-google-blockly-8b67ef7412d7)
 
-## OLD: Building The Visual Embedded Rust Extension
+## OBSOLETE: Building The Visual Embedded Rust Extension
 
 To build the extension, two repositories need to be cloned into the media folder: [`blockly-mynewt-rust`](https://github.com/lupyuen/blockly-mynewt-rust) and [`closure-library`](https://github.com/google/closure-library):
 
@@ -882,7 +975,7 @@ git clone https://github.com/lupyuen/blockly-mynewt-rust
 git clone https://github.com/google/closure-library
 ```
 
-## OLD: References
+## OBSOLETE: References
 
 The following files may be useful for reference…
 
@@ -896,7 +989,7 @@ The following files may be useful for reference…
 
 [Read more about hosting Rust applications on Mynewt](https://medium.com/@ly.lee/hosting-embedded-rust-apps-on-apache-mynewt-with-stm32-blue-pill-c86b119fe5f?source=friends_link&sk=f58f4cf6c608fded4b354063e474a93b)
 
-## OLD: Release Notes
+## OBSOLETE: Release Notes
 
 For changelog refer to...
 
