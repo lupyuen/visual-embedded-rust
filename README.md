@@ -8,15 +8,15 @@
 
 1️⃣ Carefully pry open the PineTime casing. Use tweezers to pivot the shiny battery gently to the side. Be careful not to break the red and black wires that connect the battery to the watch!
 
-2️⃣ Just above the battery we see 4 shiny rings. This is the Serial Wire Debug (SWD) Port for PineTime. We’ll use this port to flash our firmware to PineTime. The 4 pins (from left to right) are SWDIO (Data I/O), SWDCLK (Clock), 3.3V, GND.
+2️⃣ Just above the battery we see 4 shiny rings. This is the __[Serial Wire Debug](https://en.wikipedia.org/wiki/JTAG#Serial_Wire_Debug) (SWD)__ Port for PineTime. We’ll use this port to flash our firmware to PineTime. The 4 pins (from left to right) are SWDIO (Data I/O), SWDCLK (Clock), 3.3V, GND.
 
-🛈 What is “flash memory” / “flashing” / “firmware”? Read this
+🛈 [_What is “flash memory” / “flashing” / “firmware”? Read this_](https://gist.github.com/lupyuen/41fffaddade277d27c48697bca21d837)
 
 The exposed copper wire at the top centre of the photo is the Bluetooth antenna. Bend it upwards so that it doesn’t come into contact with anything.
 
 3️⃣ At lower right we see a pad marked 5V. We’ll connect this pad to Raspberry Pi to charge the battery. If charging of the battery is not needed during development, we may leave5V disconnected.
 
-4️⃣ Connect the SWD Port and the 5V Pad (optional) to the Raspberry Pi with Solid-Core Wire (22 AWG) and Female-To-Female Jumper Cables…
+4️⃣ Connect the SWD Port and the 5V Pad (optional) to the Raspberry Pi with [__Solid-Core Wire (22 AWG)__](https://www.adafruit.com/product/288) and [__Female-To-Female Jumper Cables__](https://www.adafruit.com/product/1951)…
 
 | PineTime   | Raspberry Pi        | Wire Colour |
 | :---               | :---              | :---        |
@@ -26,15 +26,15 @@ The exposed copper wire at the top centre of the photo is the Bluetooth antenna.
 | `GND`              | `GND`  | Black  |
 | `5V`               | `5V`  | Green (Optional)  |
 
-5️⃣ We may use Raspberry Pi Zero, 1, 2, 3 or 4 . The pins on Raspberry Pi to be connected are…
+5️⃣ We may use Raspberry Pi Zero, 1, 2, 3 or 4.
 
-6️⃣ The PineTime touchscreen needs to be accessible during development, so I mounted PineTime on a $2 clear box cover from Daiso with Blu Tack and sticky tape.
+6️⃣ The PineTime touchscreen needs to be accessible during development, so I mounted PineTime on a [$2 clear box cover from Daiso](https://www.daisojapan.com/p-30955-clear-box-28-x-47-x-19-x-in-12pks.aspx) with Blu Tack and sticky tape.
 
 # Remove PineTime Flash Protection
 
 PineTime is shipped with preloaded demo firmware. We need to erase the demo firmware and unprotect PineTime’s flash memory so that we may flash our own firmware.
 
-🛈 What is “flash protection”? Read this
+🛈 [_What is “flash protection”? Read this_](https://gist.github.com/lupyuen/3ee440542853e1e637582c4efa1b240a)
 
 1️⃣ Power on the Raspberry Pi. Open a command prompt and enter the following…
 
@@ -65,7 +65,7 @@ cd ~/pinetime-rust-mynewt
 scripts/install-pi.sh
 ```
 
-2️⃣ At the Welcome to Rust! prompt, press Enter to select the default option:
+2️⃣ At the `Welcome to Rust!` prompt, press Enter to select the default option:
 
 `1) Proceed with installation (default)`
 
@@ -81,9 +81,15 @@ It means that the sub-repository for one of the dependencies jimtcl is temporari
 
 3️⃣ When the installation has completed, enter the following at the command prompt…
 
-4️⃣ We should see Shut Down And Power Off Your Raspberry Pi…
+```bash
+# Remove flash protection from PineTime and erase demo firmware
+cd ~/pinetime-rust-mynewt
+scripts/nrf52-pi/flash-unprotect.sh
+```
 
-If you see Clock Speed and nothing else after that…
+4️⃣ We should see `Shut Down And Power Off Your Raspberry Pi`…
+
+If you see `Clock Speed` and nothing else after that…
 
 ```
 Info : BCM2835 SPI SWD driver
@@ -101,7 +107,7 @@ If you see this instead…
 openocd/bin/openocd: cannot execute binary file: Exec format error
 ```
 
-Then `install-pi.sh` probably didn’t run correctly. To fix this, copy the openocd executable like this…
+Then `install-pi.sh` probably didn’t run correctly. To fix this, copy the `openocd` executable like this…
 
 ```bash
 cp $HOME/openocd-spi/src/openocd $HOME/pinetime-rust-mynewt/openocd/bin/openocd
@@ -109,11 +115,17 @@ cp $HOME/openocd-spi/src/openocd $HOME/pinetime-rust-mynewt/openocd/bin/openocd
 
 5️⃣ Shut down and power off your Raspberry Pi. Wait 30 seconds for the red and green LEDs on your Pi to turn off. Power on your Pi. Enter the same commands at a command prompt…
 
+```bash
+# Remove flash protection from PineTime and erase demo firmware
+cd ~/pinetime-rust-mynewt
+scripts/nrf52-pi/flash-unprotect.sh
+```
+
 6️⃣ We should see `Flash Is Already Unprotected`…
 
 PineTime’s demo firmware has been erased and the flash protection has been removed.
 
-🛈 What is OpenOCD? Why Raspberry Pi and not ROCK64 or Nvidia Jetson Nano? Read this
+🛈 [_What is OpenOCD? Why Raspberry Pi and not ROCK64 or Nvidia Jetson Nano? Read this_](https://gist.github.com/lupyuen/18e66c3e81e11050a10d1192c5b84bb0)
 
 Pi: https://github.com/lupyuen/pinetime-rust-mynewt/releases/tag/v3.0.3
 
