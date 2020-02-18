@@ -6,6 +6,8 @@
 
 - Hardware Required: PineTime Smart Watch and Raspberry Pi (preferably Pi 4 with Raspbian)
 
+![Visual Embedded Rust](images/animation.gif)
+
 # Connect PineTime to Raspberry Pi
 
 1️⃣ Carefully pry open the PineTime casing. Use tweezers to pivot the shiny battery gently to the side. Be careful not to break the red and black wires that connect the battery to the watch!
@@ -180,6 +182,8 @@ Click `Visual Editor` at top right
 
 Use the Visual Editor to edit the Visual Rust application
 
+![Editing the Visual Rust application](images/animation.gif)
+
 5️⃣ After editing, save the `visual.rs` source file to save the visual program. Don't edit the Rust source file manually, always use the Visual Editor.
 
 # Build And Flash The Firmware
@@ -211,11 +215,15 @@ After the building the Bootloader, we should see `Done`
 
 Ignore the message `There Are Task Errors`
 
+The Bootloader only needs to be flashed once.
+
 3️⃣ In the Task Runner, click `[2] Build Application`
 
 After the building the Application, we should see `Done`
 
 If you see the message `Undefined Reference To Main`, click `[2] Build Application` again and it should succeed.
+
+The Application needs to be rebuilt whenever a source file has been changed.
 
 4️⃣ In the Task Runner, click `[3] Image Application`
 
