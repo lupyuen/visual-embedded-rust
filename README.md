@@ -4,7 +4,116 @@
 
 - Generates Embedded Rust code for PineTime Smart Watch with [Apache Mynewt](https://mynewt.apache.org/) realtime operating system
 
-# Usage
+# Connect PineTime to Raspberry Pi
+
+1️⃣ Carefully pry open the PineTime casing. Use tweezers to pivot the shiny battery gently to the side. Be careful not to break the red and black wires that connect the battery to the watch!
+
+2️⃣ Just above the battery we see 4 shiny rings. This is the Serial Wire Debug (SWD) Port for PineTime. We’ll use this port to flash our firmware to PineTime. The 4 pins (from left to right) are SWDIO (Data I/O), SWDCLK (Clock), 3.3V, GND.
+
+🛈 What is “flash memory” / “flashing” / “firmware”? Read this
+
+The exposed copper wire at the top centre of the photo is the Bluetooth antenna. Bend it upwards so that it doesn’t come into contact with anything.
+
+3️⃣ At lower right we see a pad marked 5V. We’ll connect this pad to Raspberry Pi to charge the battery. If charging of the battery is not needed during development, we may leave5V disconnected.
+
+4️⃣ Connect the SWD Port and the 5V Pad (optional) to the Raspberry Pi with Solid-Core Wire (22 AWG) and Female-To-Female Jumper Cables…
+
+| PineTime   | Raspberry Pi        | Wire Colour |
+| :---               | :---              | :---        |
+| `SWDIO`            | `Header Pin 19 (MOSI)`  | Yellow |
+| `SWDCLK`           | `Header Pin 23 (SCLK)`  | Blue |
+| `3.3V`             | `3.3V`  | Red    |
+| `GND`              | `GND`  | Black  |
+| `5V`               | `5V`  | Green (Optional)  |
+
+5️⃣ We may use Raspberry Pi Zero, 1, 2, 3 or 4 . The pins on Raspberry Pi to be connected are…
+
+6️⃣ The PineTime touchscreen needs to be accessible during development, so I mounted PineTime on a $2 clear box cover from Daiso with Blu Tack and sticky tape.
+
+# Remove PineTime Flash Protection
+
+PineTime is shipped with preloaded demo firmware. We need to erase the demo firmware and unprotect PineTime’s flash memory so that we may flash our own firmware.
+
+🛈 What is “flash protection”? Read this
+
+1️⃣ Power on the Raspberry Pi. Open a command prompt and enter the following…
+
+```bash
+sudo raspi-config
+```
+
+Select `Interfacing Options → SPI → Yes`
+
+Select `Finish`
+
+At the command prompt, enter the following…
+
+```bash
+#  Remove folders ~/pinetime-rust-mynewt and ~/openocd-spi (if they exist)
+rm -rf ~/pinetime-rust-mynewt
+rm -rf ~/openocd-spi
+
+# Download and extract "pinetime-rust-mynewt" folder containing our prebuilt firmware, source files and flashing scripts
+sudo apt install -y wget p7zip-full
+cd ~
+wget https://github.com/lupyuen/pinetime-rust-mynewt/releases/download/v3.0.3/pinetime-rust-mynewt.7z
+7z x pinetime-rust-mynewt.7z
+rm pinetime-rust-mynewt.7z
+
+# Install build tools for PineTime: VSCode, Rust, gcc, gdb, openocd-spi, newt
+cd ~/pinetime-rust-mynewt
+scripts/install-pi.sh
+```
+
+2️⃣ At the Welcome to Rust! prompt, press Enter to select the default option:
+
+`1) Proceed with installation (default)`
+
+If you see this error…
+
+```
+Cloning into 'openocd-spi/jimtcl'...
+fatal: unable to access 'http://repo.or.cz/r/jimtcl.git/': Recv failure: Connection reset by peer
+fatal: clone of 'http://repo.or.cz/r/jimtcl.git' into submodule path '/private/tmp/aa/openocd-spi/jimtcl' failed
+```
+
+It means that the sub-repository for one of the dependencies jimtcl is temporarily down. You may download the pre-built `openocd-spi` binaries [from this link](https://github.com/lupyuen/pinetime-rust-mynewt/releases/download/openocd-spi2/openocd-spi.7z). Then copy the executable openocd-spi/src/openocd to pinetime-rust-mynewt/openocd/bin/openocd
+
+3️⃣ When the installation has completed, enter the following at the command prompt…
+
+4️⃣ We should see Shut Down And Power Off Your Raspberry Pi…
+
+If you see Clock Speed and nothing else after that…
+
+```
+Info : BCM2835 SPI SWD driver
+Info : SWD only mode enabled
+Info : clock speed 31200 kHz
+```
+
+Then the connection to the SWD Port is probably loose, check the pins. 
+
+Also enter `sudo raspi-config` and confirm that the SPI port has been enabled.
+
+If you see this instead…
+
+```
+openocd/bin/openocd: cannot execute binary file: Exec format error
+```
+
+Then `install-pi.sh` probably didn’t run correctly. To fix this, copy the openocd executable like this…
+
+```bash
+cp $HOME/openocd-spi/src/openocd $HOME/pinetime-rust-mynewt/openocd/bin/openocd
+```
+
+5️⃣ Shut down and power off your Raspberry Pi. Wait 30 seconds for the red and green LEDs on your Pi to turn off. Power on your Pi. Enter the same commands at a command prompt…
+
+6️⃣ We should see `Flash Is Already Unprotected`…
+
+PineTime’s demo firmware has been erased and the flash protection has been removed.
+
+🛈 What is OpenOCD? Why Raspberry Pi and not ROCK64 or Nvidia Jetson Nano? Read this
 
 Pi: https://github.com/lupyuen/pinetime-rust-mynewt/releases/tag/v3.0.3
 
