@@ -16,7 +16,11 @@
 
 🛈 [_What is “flash memory” / “flashing” / “firmware”? Read this_](https://gist.github.com/lupyuen/41fffaddade277d27c48697bca21d837)
 
+![SWD Port on PineTime](images/pinetime-swd3.jpg)
+
 The exposed copper wire at the top centre of the photo is the Bluetooth antenna. Bend it upwards so that it doesn’t come into contact with anything.
+
+![Bend PineTime antenna](images/pinetime-antenna.png)
 
 3️⃣ At lower right we see a pad marked 5V. We’ll connect this pad to Raspberry Pi to charge the battery. If charging of the battery is not needed during development, we may leave5V disconnected.
 
@@ -30,9 +34,15 @@ The exposed copper wire at the top centre of the photo is the Bluetooth antenna.
 | `GND`              | `GND`  | Black  |
 | `5V`               | `5V`  | Green (Optional)  |
 
+![Raspberry Pi Pinout](images/pinetime-pi-pinout-spi.png)
+
 5️⃣ We may use Raspberry Pi Zero, 1, 2, 3 or 4.
 
+![Raspberry Pi Pinout](images/pi-spi-pin.jpg)
+
 6️⃣ The PineTime touchscreen needs to be accessible during development, so I mounted PineTime on a [$2 clear box cover from Daiso](https://www.daisojapan.com/p-30955-clear-box-28-x-47-x-19-x-in-12pks.aspx) with Blu Tack and sticky tape.
+
+![Connecting PineTime to Raspberry Pi](images/pi-spi-pinetime-small.jpg)
 
 # Remove PineTime Flash Protection
 
@@ -177,7 +187,7 @@ default =  [          # Select the conditional compiled features
 
 4️⃣ Edit the Visual Rust application...
 
-Browse to `rust/app/src/visual.rs`
+Browse to [`rust/app/src/visual.rs`](https://github.com/lupyuen/pinetime-rust-mynewt/blob/master/rust/app/src/visual.rs)
 
 Click `Visual Editor` at top right
 
@@ -187,7 +197,9 @@ Use the Visual Editor to edit the Visual Rust application
 
 ![Editing the Visual Rust application](images/animation.gif)
 
-5️⃣ After editing, save the `visual.rs` source file to save the visual program. Don't edit the Rust source file manually, always use the Visual Editor.
+5️⃣ After editing, save the [`visual.rs`](https://github.com/lupyuen/pinetime-rust-mynewt/blob/master/rust/app/src/visual.rs) source file to save the visual program. Don't edit the Rust source file manually, always use the Visual Editor.
+
+[_Rust Source Code generated from Visual Rust application_](https://github.com/lupyuen/pinetime-rust-mynewt/blob/master/rust/app/src/visual.rs)
 
 Let's look at the blocks in the visual program...
 
@@ -416,6 +428,8 @@ _From https://github.com/lupyuen/pinetime-rust-mynewt/blob/master/logs/load-appl
 
 8️⃣ Click the Trash icon 🗑 near the top right to terminate the application. If we click the Close icon ❌ instead of the Trash icon, the next flash or debug command will fail.
 
+![Click the Trash icon, not the Close icon](images/trash-close.png)
+
 # Debug The Firmware
 
 1️⃣ Build the application: In the Task Runner, click `[2] Build Application`
@@ -432,7 +446,9 @@ The debugging messages will be displayed here.
 
 4️⃣ The program has paused at first line of code in our firmware, the Reset Handler.
 
-In the Debug Toolbar, click Continue or press F5
+In the Debug Toolbar, click `Continue` or press `F5`
+
+![Continue](images/debug-bar-continue.png)
 
 🛈 [_What’s a Reset Handler? Read this_](https://gist.github.com/lupyuen/b0b7782f21330e292ea65b9c875bd9a7)
 
