@@ -278,7 +278,9 @@ fn ui_builder() -> impl Widget<State> {  //  `State` is the Application State
 
 ![On Label Show Block](images/animation3.gif)
 
-This block is called 
+This block is called to generate the text that will be shown on the label `my_label`.
+
+We return the variable `count` for display on the label.
 
 This block generates the following Rust code...
 
@@ -294,6 +296,10 @@ fn on_my_label_show(state: _, env: _) -> ArgValue {
 # On Button Press
 
 ![On Button Press Block](images/animation4.gif)
+
+This block is called to when the button `my_button` is pressed.
+
+We increment the variable `count` by 1.
 
 This block generates the following Rust code...
 
