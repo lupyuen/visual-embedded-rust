@@ -2,7 +2,7 @@
 
 - Create and edit Embedded Rust programs visually by dragging and dropping blocks
 
-- Generates Embedded Rust firmware code for PineTime Smart Watch hosted on [Apache Mynewt](https://mynewt.apache.org/) realtime operating system
+- Generates Embedded Rust firmware code for PineTime Smart Watch hosted on [Apache Mynewt](https://mynewt.apache.org/) realtime operating system, with druid UI Framework
 
 - Hardware Required: PineTime Smart Watch and Raspberry Pi (preferably Pi 4 with Raspbian)
 
@@ -186,6 +186,24 @@ Use the Visual Editor to edit the Visual Rust application
 
 5️⃣ After editing, save the `visual.rs` source file to save the visual program. Don't edit the Rust source file manually, always use the Visual Editor.
 
+Let's look at the blocks in the visual program...
+
+# On Start Block
+
+![On Start Block](images/animation1.gif)
+
+# Create App Block
+
+![Create App Block](images/animation2.gif)
+
+# On Button Press Block
+
+![On Button Press Block](images/animation3.gif)
+
+# On Label Show Block
+
+![On Label Show Block](images/animation4.gif)
+
 # Build And Flash The Firmware
 
 We’ll be flashing the PineTime firmware that’s based on open-source [__Apache Mynewt embedded operating system__](https://mynewt.apache.org/). Mynewt OS contains two components that we shall flash to PineTime…
@@ -215,7 +233,7 @@ After the building the Bootloader, we should see `Done`
 
 Ignore the message `There Are Task Errors`
 
-The Bootloader only needs to be flashed once.
+The Bootloader only needs to be built once.
 
 3️⃣ In the Task Runner, click `[2] Build Application`
 
