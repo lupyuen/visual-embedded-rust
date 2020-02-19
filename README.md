@@ -38,6 +38,8 @@ The exposed copper wire at the top centre of the photo is the Bluetooth antenna.
 
 ![Raspberry Pi Pinout](images/pinetime-pi-pinout-spi.png)
 
+_Based on https://pinout.xyz/_
+
 5️⃣ We may use Raspberry Pi Zero, 1, 2, 3 or 4.
 
 ![Raspberry Pi Pinout](images/pi-spi-pin.jpg)
