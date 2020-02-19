@@ -6,6 +6,8 @@
 
 - Hardware Required: PineTime Smart Watch and Raspberry Pi (preferably Pi 4 with Raspbian)
 
+![Demo](images/demo.gif)
+
 ![Visual Embedded Rust](images/animation.gif)
 
 # Connect PineTime to Raspberry Pi
@@ -201,7 +203,11 @@ Use the Visual Editor to edit the Visual Rust application
 
 [_Rust Source Code generated from Visual Rust application_](https://github.com/lupyuen/pinetime-rust-mynewt/blob/master/rust/app/src/visual.rs)
 
-Let's look at the blocks in the visual program...
+The Visual Rust application shows a button that increments a counter...
+
+![Demo](images/demo.gif)
+
+Let's look at the blocks in the Visual Rust application...
 
 # On Start
 
@@ -425,6 +431,8 @@ Enabled ARM Semihosting to show debug output
 _From https://github.com/lupyuen/pinetime-rust-mynewt/blob/master/logs/load-application-pi.log_
 
 7️⃣ Our Visual Rust application starts running on PineTime
+
+![Demo](images/demo.gif)
 
 8️⃣ Click the Trash icon 🗑 near the top right to terminate the application. If we click the Close icon ❌ instead of the Trash icon, the next flash or debug command will fail.
 
