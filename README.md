@@ -2,7 +2,7 @@
 
 - Create and edit Embedded Rust programs visually by dragging and dropping blocks
 
-- Generates Embedded Rust firmware code for PineTime Smart Watch hosted on [Apache Mynewt](https://mynewt.apache.org/) realtime operating system, with druid UI Framework
+- Generates Embedded Rust firmware code for [__PineTime Smart Watch__](https://wiki.pine64.org/index.php/PineTime) hosted on [__Apache Mynewt__](https://mynewt.apache.org/) realtime operating system, with [__druid UI Framework__](https://github.com/lupyuen/druid-embedded)
 
 - Hardware Required: PineTime Smart Watch and Raspberry Pi (preferably Pi 4 with Raspbian)
 
@@ -188,21 +188,123 @@ Use the Visual Editor to edit the Visual Rust application
 
 Let's look at the blocks in the visual program...
 
-# On Start Block
+# On Start
 
 ![On Start Block](images/animation1.gif)
 
-# Create App Block
+Upon starting the Watch App, we initialise the `count` variable to 0. 
+
+This block generates the following Rust code...
+
+```rust
+/// Application State
+#[infer_type]  //  Infer the missing types
+#[derive(Clone, Data, Default)]
+struct State {
+    count: _,
+}
+
+/// Will be run upon startup to launch the app
+#[infer_type]  //  Infer the missing types
+pub fn on_start() -> MynewtResult<()> {
+    console::print("on_start\n");
+    //  Build a new window
+    let main_window = WindowDesc::new(ui_builder);
+    //  Create application state
+    let mut state = State::default();
+    state.count = 0;
+
+    //  Launch the window with the application state
+    AppLauncher::with_window(main_window)
+        .use_simple_logger()
+        .launch(state)
+        .expect("launch failed");
+    //  Return success to `main()` function
+    Ok(())
+}
+```
+
+# Create App
 
 ![Create App Block](images/animation2.gif)
 
-# On Button Press Block
+We create a Watch App with two Widgets...
 
-![On Button Press Block](images/animation3.gif)
+1. A Label named `my_label` surrounded by padding of 5 pixels
 
-# On Label Show Block
+1. A Button named `my_button` with the title `Press Me`, surrounded by padding of 5 pixels
 
-![On Label Show Block](images/animation4.gif)
+This block generates the following Rust code...
+
+```rust
+/// Build the UI for the window
+#[infer_type]  //  Infer the missing types
+fn ui_builder() -> impl Widget<State> {  //  `State` is the Application State
+    console::print("Rust UI builder\n"); console::flush();
+    //  Create a line of text
+    //  Call `on_my_label_show` to get label text
+    let my_label_text = LocalizedString::new("hello-counter")
+        .with_arg("count", on_my_label_show);  
+    //  Create a label widget `my_label`
+    let my_label = Label::new(my_label_text);
+    //  Create a button widget `my_button`
+    //  Call `on_my_button_press` when pressed
+    let my_button = Button::new("Press Me", on_my_button_press);
+
+    //  Create a column
+    let mut col = Column::new();
+    //  Add the label widget to the column, centered with padding
+    col.add_child(
+        Align::centered(
+            Padding::new(5.0,
+                my_label
+            )
+        ),
+        1.0
+    );
+    //  Add the button widget to the column, with padding
+    col.add_child(
+        Padding::new(5.0,
+            my_button
+        ),
+        1.0
+    );
+    //  Return the column containing the widgets
+    col
+}  //  ;
+```
+
+# On Label Show
+
+![On Label Show Block](images/animation3.gif)
+
+This block is called 
+
+This block generates the following Rust code...
+
+```rust
+/// Callback function that will be called to create the formatted text for the label `my_label`
+#[infer_type]  //  Infer the missing types
+fn on_my_label_show(state: _, env: _) -> ArgValue {
+    console::print("on_my_label_show\n");
+    state.count.into()
+}
+```
+
+# On Button Press
+
+![On Button Press Block](images/animation4.gif)
+
+This block generates the following Rust code...
+
+```rust
+/// Callback function that will be called when the button `my_button` is pressed
+#[infer_type]  //  Infer the missing types
+fn on_my_button_press(ctx: _, state: _, env: _) {
+    console::print("on_my_button_press\n");
+    state.count = state.count + 1;
+}
+```
 
 # Build And Flash The Firmware
 
