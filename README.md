@@ -64,8 +64,11 @@ wget https://github.com/lupyuen/pinetime-rust-mynewt/releases/download/v3.0.3/pi
 7z x pinetime-rust-mynewt.7z
 rm pinetime-rust-mynewt.7z
 
-# Install build tools for PineTime: VSCode, Rust, gcc, gdb, openocd-spi, newt
+# Get updates
 cd ~/pinetime-rust-mynewt
+git pull --recurse-submodules
+
+# Install build tools for PineTime: VSCode, Rust, gcc, gdb, openocd-spi, newt
 scripts/install-pi.sh
 ```
 
