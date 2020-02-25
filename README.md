@@ -470,6 +470,277 @@ In the Debug Toolbar, click Continue or press F5
 
 🛈 [_What’s a main function? Read this_](https://gist.github.com/lupyuen/5360769a2d92ec50d988cce92622abff)
 
-# TODO: Edit The Visual Rust Application on Windows
+# Edit, Build and Debug the Visual Rust Application on Windows
 
-# TODO: Edit The Visual Rust Application on macOS
+![Debugging PineTime Firmware with VSCode on Windows](images/vscode-debug-windows.png)
+
+To edit, build and debug the Visual Rust Application on Windows, follow these steps...
+
+## _[Windows]_ Connect PineTime to ST-Link
+
+If we’re doing serious development with PineTime, I recommend getting an ST-Link v2 USB dongle ($2) that connects PineTime directly to our Windows, macOS or Linux computer.
+
+ST-Link allows us to flash PineTime directly from our computer, and it even supports firmware debugging (setting breakpoints, checking values of variables at runtime, …)
+
+Here’s how we connect PineTime to ST-Link…
+
+![PineTime connected to ST-Link](images/stlink.jpg)
+
+| PineTime          | ST-Link        | Wire Colour |
+| :---               | :---              | :---        |
+| `SWDIO`            | `SWDIO`  | Yellow |
+| `SWDCLK`           | `SWDCLK`  | Blue |
+| `3.3V`             | `3.3V`  | Red    |
+| `GND`              | `GND`  | Black  |
+| `5V`               | `5V`   | Green (Optional) |
+
+Before connecting ST-Link to our Windows computer, the ST-Link USB driver should be installed...
+
+Download the ST-Link USB driver from ST-Link Driver Website (email registration required)…
+
+https://www.st.com/en/development-tools/stsw-link009.html
+
+Click `Get Software`
+
+Unzip the downloaded file. Double-click the driver installer:
+`dpinst_amd64.exe`
+
+## _[Windows]_ Remove PineTime Flash Protection
+
+This must be done with a Raspberry Pi, not on Windows, because ST-Link is a High-Level Adapter that doesn't implement all flash commands. Follow the instructions above for Raspberry Pi.
+
+## _[Windows]_ Install PineTime Build Tools
+
+1️⃣ Download the pinetime-rust-mynewt.7z file attached below…
+
+https://github.com/lupyuen/pinetime-rust-mynewt/releases/download/v3.0.1/pinetime-rust-mynewt.7z
+
+Expand the `.7z` file with 7zip…
+
+https://www.7-zip.org/download.html
+
+2️⃣ Click here to install Build Tools For Visual Studio 2019:
+
+https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2019
+
+![Build Tools For Visual Studio 2019](images/vsstudio-build-tools.png)
+
+Click the `Individual Components` tab
+
+Select the following components:
+
+1. `Windows 10 SDK (10.0.18362.0)`
+
+1. `C++ CMake Tools for Windows`
+
+1. (This should be automatically selected) `MSVC v142 — VS 2019 C++ x64/x86 Build Tools`
+
+3️⃣ Install `rustup` according to the instructions here:
+`rustup.rs`
+
+Click the link provided to download `rustup‑init.exe`
+
+Launch the downloaded file `rustup‑init.exe`
+
+If you see the message `Windows Defender SmartScreen prevented an unrecognised app from starting`…
+
+Click `More Info`
+
+Click `Run Anyway`
+
+At the `Welcome to Rust!` prompt, press Enter to select the default option:
+
+`1) Proceed with installation (default)`
+
+4️⃣ Open the Command Prompt and enter…
+
+```cmd
+:: Install Rust build tools for Arm Cortex
+rustup default nightly
+rustup update
+rustup target add thumbv7em-none-eabihf
+```
+
+5️⃣ Install [GNU Arm Embedded Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads) for Windows from Arm Developer Website…
+
+https://developer.arm.com/-/media/Files/downloads/gnu-rm/8-2019q3/RC1.1/gcc-arm-none-eabi-8-2019-q3-update-win32-sha1.exe?revision=fcadabed-d946-49dc-8f78-0732d2f43773?product=GNU%20Arm%20Embedded%20Toolchain,32-bit,,Windows,8-2019-q3-update
+
+Select this option at the last install step:
+`"Add path to environment variable"`
+
+6️⃣ Install VSCode…
+
+https://code.visualstudio.com/
+
+## _[Windows]_ Edit The Visual Rust Application
+
+1️⃣ Launch VSCode
+
+Click `File → Open Folder`
+
+Select the downloaded folder `pinetime-rust-mynewt` and click OK
+
+When prompted to open the workspace, click Open Workspace
+
+When prompted to install Extension Recommendations, click `Install All`
+
+2️⃣ Install the `Visual Embedded Rust` Extension...
+
+Click `View → Extensions`
+
+Search for `Visual Embedded Rust`
+
+Install the extension
+
+3️⃣ Enable the Visual Rust application...
+
+Browse to `rust/app/Cargo.toml`
+
+Modify the file such that `visual_app` is uncommented and the other options are commented out...
+
+```yaml
+default =  [          # Select the conditional compiled features
+    # "display_app",  # Disable graphics display app
+    # "ui_app",       # Disable druid UI app
+    "visual_app",     # Enable Visual Rust app
+    # "use_float",    # Disable floating-point for GPS geolocation
+]
+```
+
+4️⃣ Edit the Visual Rust application...
+
+Browse to [`rust/app/src/visual.rs`](https://github.com/lupyuen/pinetime-rust-mynewt/blob/master/rust/app/src/visual.rs)
+
+Click `Visual Editor` at top right
+
+![Click Visual Editor](images/install3.png)
+
+Use the Visual Editor to edit the Visual Rust application
+
+![Editing the Visual Rust application](images/animation.gif)
+
+5️⃣ After editing, save the [`visual.rs`](https://github.com/lupyuen/pinetime-rust-mynewt/blob/master/rust/app/src/visual.rs) source file to save the visual program. Don't edit the Rust source file manually, always use the Visual Editor.
+
+## _[Windows]_ Build And Flash The Firmware
+
+1️⃣ At the lower left corner, there is a panel `Task Runner`. Click the panel to display the build and flash tasks.
+
+2️⃣ In the Task Runner, click `[1] Build Bootloader`
+
+When the Terminal Panel appears, right-click the `Terminal` tab, select `Move Panel Right`
+
+After the building the Bootloader, we should see `Done`
+
+Ignore the message `There Are Task Errors`
+
+The Bootloader only needs to be built once.
+
+3️⃣ In the Task Runner, click `[2] Build Application`
+
+After the building the Application, we should see `Done`
+
+If you see the message `Undefined Reference To Main`, click `[2] Build Application` again and it should succeed.
+
+The Application needs to be rebuilt whenever a source file has been changed.
+
+__Note:__ When we run `Build Application`, the build script will overwrite the default `.vscode/launch.json` (meant for Raspberry Pi) with the correct version `.vscode/launch-nrf52.json` (meant for ST-Link on Windows and macOS)
+
+4️⃣ In the Task Runner, click `[3] Image Application`
+
+After the creating the Firmware Image, we should see `Done`
+
+5️⃣ In the Task Runner, click `[4] Flash Bootloader`
+
+After flashing the Bootloader Firmware to PineTime, we should see `Done`
+
+
+```
+Flashing Bootloader...
+target halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x000000d8 msp: 0x20010000
+Enabled ARM Semihosting to show debug output
+** Programming Started **
+Info : nRF52832-QFAA(build code: E1) 512kB Flash, 64kB RAM
+Warn : Adding extra erase range, 0x00000b78 .. 0x00000fff
+** Programming Finished **
+** Verify Started **
+** Verified OK **
+
+Restarting...
+target halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x000000d8 msp: 0x20010000, semihosting
+
+**** Done!
+```
+
+_From https://github.com/lupyuen/pinetime-rust-mynewt/blob/master/logs/load-bootloader-pi.log_
+
+The Bootloader only needs to be flashed once.
+
+6️⃣ In the Task Runner, click `[5] Flash Application`
+
+After the flashing the Application Firmware to PineTime, we should see `Done! Press Ctrl-C To Exit`…
+
+```
+Flashing Application...
+target halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x000000d8 msp: 0x20010000
+Enabled ARM Semihosting to show debug output
+** Programming Started **
+Info : nRF52832-QFAA(build code: E1) 512kB Flash, 64kB RAM
+Warn : Adding extra erase range, 0x0003e820 .. 0x0003efff
+** Programming Finished **
+** Verify Started **
+** Verified OK **
+
+Restarting...
+target halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x000000d8 msp: 0x20010000, semihosting
+Enabled ARM Semihosting to show debug output
+
+**** Done! Press Ctrl-C to exit...
+```
+
+_From https://github.com/lupyuen/pinetime-rust-mynewt/blob/master/logs/load-application-pi.log_
+
+7️⃣ Our Visual Rust application starts running on PineTime
+
+![Demo](images/demo.gif)
+
+8️⃣ Click the Trash icon 🗑 near the top right to terminate the application. If we click the Close icon ❌ instead of the Trash icon, the next flash or debug command will fail.
+
+![Click the Trash icon, not the Close icon](images/trash-close.png)
+
+## _[Windows]_ Debug The Firmware
+
+1️⃣ Build the application: In the Task Runner, click `[2] Build Application`
+
+The build script will also overwrite the default `.vscode/launch.json` (meant for Raspberry Pi) with the correct version `.vscode/launch-nrf52.json` (meant for ST-Link on Windows and macOS)
+
+2️⃣ Click `Debug → Start Debugging` or press `F5`
+
+This starts the VSCode Debugger and automatically flashes our updated firmware to PineTime.
+
+3️⃣ Click `View → Output`
+
+In the Output Panel, select `Adapter Output`
+
+The debugging messages will be displayed here.
+
+4️⃣ The program has paused at first line of code in our firmware, the Reset Handler.
+
+In the Debug Toolbar, click `Continue` or press `F5`
+
+![Continue](images/debug-bar-continue.png)
+
+🛈 [_What’s a Reset Handler? Read this_](https://gist.github.com/lupyuen/b0b7782f21330e292ea65b9c875bd9a7)
+
+5️⃣ The debugger now pauses at the first line of the main function that’s defined in rust/app/src/lib.rs
+
+This is the first line of Rust code in our Rust Application, which will call test_display in a while.
+
+In the Debug Toolbar, click Continue or press F5
+
+🛈 [_What’s a main function? Read this_](https://gist.github.com/lupyuen/5360769a2d92ec50d988cce92622abff)
+
+# TODO: Edit, Build and Debug the Visual Rust Application on macOS
