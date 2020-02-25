@@ -478,7 +478,7 @@ To edit, build and debug the Visual Rust Application on Windows, follow these st
 
 ## _[Windows]_ Connect PineTime to ST-Link
 
-If we’re doing serious development with PineTime, I recommend getting an ST-Link v2 USB dongle ($2) that connects PineTime directly to our Windows, macOS or Linux computer.
+If we’re doing serious development with PineTime, I recommend getting an [ST-Link v2 USB dongle](https://www.aliexpress.com/wholesale?catId=0&initiative_id=SB_20180924134644&SearchText=st-link+v2&switch_new_app=y) ($2) that connects PineTime directly to our Windows, macOS or Linux computer.
 
 ST-Link allows us to flash PineTime directly from our computer, and it even supports firmware debugging (setting breakpoints, checking values of variables at runtime, …)
 
