@@ -81,6 +81,12 @@ rm pinetime-rust-mynewt.7z
 # Install build tools for PineTime: VSCode, Rust, gcc, gdb, openocd-spi, newt
 cd ~/pinetime-rust-mynewt
 scripts/install-pi.sh
+
+# Latest nightly-2020-04-20 fails with asm error, so we use nightly-2020-02-16
+source $HOME/.cargo/env
+rustup default nightly-2020-02-16
+rustup update
+rustup target add thumbv7em-none-eabihf
 ```
 
 2️⃣ At the `Welcome to Rust!` prompt, press Enter to select the default option:
