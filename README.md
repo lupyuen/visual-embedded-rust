@@ -20,6 +20,16 @@
 
 ![SWD Port on PineTime](images/pinetime-swd3.jpg)
 
+In the above photo, the SWD pins from left to right are…
+
+1. __SWDIO__ (Yellow)
+
+1  __SWDCLK__ (Blue)
+
+1. __3.3V__ (Red)
+
+1. __GND__ (Black)
+
 The exposed copper wire at the top centre of the photo is the Bluetooth antenna. Bend it upwards so that it doesn’t come into contact with anything.
 
 ![Bend PineTime antenna](images/pinetime-antenna.png)
