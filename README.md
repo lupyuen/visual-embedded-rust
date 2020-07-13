@@ -24,7 +24,7 @@ In the above photo, the SWD pins from left to right are…
 
 1. __SWDIO__ (Yellow)
 
-1  __SWDCLK__ (Blue)
+1. __SWDCLK__ (Blue)
 
 1. __3.3V__ (Red)
 
