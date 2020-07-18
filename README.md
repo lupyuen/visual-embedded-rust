@@ -123,7 +123,7 @@ scripts/nrf52-pi/flash-unprotect.sh
 
 4️⃣ We should see `Shut Down And Power Off Your Raspberry Pi`…
 
-If you see `Clock Speed` and nothing else after that…
+If we see `Clock Speed` and nothing else after that…
 
 ```
 Info : BCM2835 SPI SWD driver
@@ -134,11 +134,19 @@ Info : nrf52.cpu: hardware has 6 breakpoints, 4 watchpoints
 Info : Listening on port 3333 for gdb connections
 ```
 
-Then the connection to the SWD Port is probably loose, check the pins. 
+Then the connection to the SWD Port is probably loose, please check the pins. 
+
+If we don't see this `DPIDR` number, or if we see a different `DPIDR` number...
+
+```
+SWD DPIDR 0x2ba01477
+```
+
+Then the connection to the SWD Port is most likely loose, please check the pins. 
 
 Also enter `sudo raspi-config` and confirm that the SPI port has been enabled.
 
-If you see this instead…
+If we see this instead…
 
 ```
 openocd/bin/openocd: cannot execute binary file: Exec format error
