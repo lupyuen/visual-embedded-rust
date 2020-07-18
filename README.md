@@ -123,6 +123,8 @@ scripts/nrf52-pi/flash-unprotect.sh
 
 4️⃣ We should see `Shut Down And Power Off Your Raspberry Pi`…
 
+![Unprotect Flash ROM](https://lupyuen.github.io/images/flash-unprotect.png)
+
 If we see `Clock Speed` and nothing else after that…
 
 ```
