@@ -130,8 +130,6 @@ Info : BCM2835 SPI SWD driver
 Info : SWD only mode enabled
 Info : clock speed 31200 kHz
 Info : SWD DPIDR 0x2ba01477
-Info : nrf52.cpu: hardware has 6 breakpoints, 4 watchpoints
-Info : Listening on port 3333 for gdb connections
 ```
 
 Then the connection to the SWD Port is probably loose, please check the pins. 
