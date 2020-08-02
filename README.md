@@ -464,6 +464,22 @@ _From https://github.com/lupyuen/pinetime-rust-mynewt/blob/master/logs/load-appl
 
 ![Click the Trash icon, not the Close icon](images/trash-close.png)
 
+# PineTime Updater
+
+Alternatively, flash the following two files to PineTime with [__PineTime Updater__](https://github.com/lupyuen/pinetime-updater)...
+
+1.  __MCUBoot Bootloader__
+
+    File: `bin/targets/nrf52_boot/app/boot/mynewt/mynewt.elf`
+
+    Address: `0x0`
+
+1.  __Rust+Mynewt Firmware__
+
+    File: `bin/targets/nrf52_my_sensor/app/apps/my_sensor_app/my_sensor_app.elf`
+
+    Address: `0x8000`
+
 # Debug The Firmware
 
 1️⃣ Build the application: In the Task Runner, click `[2] Build Application`
