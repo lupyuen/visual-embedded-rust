@@ -1,3 +1,5 @@
+UPDATE: This code in this article has been archived in the [pre-lvgl branch of pinetime-rust-mynewt](https://github.com/lupyuen/pinetime-rust-mynewt/tree/pre-lvgl). The [pinetime-rust-mynewt firmware](https://github.com/lupyuen/pinetime-rust-mynewt) has been revamped to support [Rust Watch Faces on LVGL](https://lupyuen.github.io/pinetime-rust-mynewt/articles/watchface). [Check out the updates](https://lupyuen.github.io/pinetime-rust-mynewt/articles/watchface)
+
 # visual-embedded-rust
 
 - Create and edit Embedded Rust programs visually by dragging and dropping blocks
